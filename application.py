@@ -1,23 +1,19 @@
 import flask
-from flask import Flask, jsonify
 import flask_login
 
 #define app
-app = Flask(__name__)
-app.secret_key = 'secret'
+app = flask.Flask(__name__)
 
 #set up login manager
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
 
-#mock database
+#mock database TODO retrieve dynamically from DB
 users = {'carina': {'pw': 'pw'}}
-
 
 #user class definition
 class User(flask_login.UserMixin):
     pass
-
 
 @login_manager.user_loader
 def user_loader(email):
@@ -47,11 +43,23 @@ def request_loader(request):
 def login():
     if flask.request.method == 'GET':
         return '''
-               <form action='login' method='POST'>
-                <input type='text' name='email' id='email' placeholder='email'></input>
-                <input type='password' name='pw' id='pw' placeholder='password'></input>
-                <input type='submit' name='submit'></input>
-               </form>
+               <div class="login-page">
+                  <div class="form">
+                    <form class="register-form">
+                      <input type="text" placeholder="name"/>
+                      <input type="password" placeholder="password"/>
+                      <input type="text" placeholder="email address"/>
+                      <button>create</button>
+                      <p class="message">Already registered? <a href="#">Sign In</a></p>
+                    </form>
+                    <form class="login-form">
+                      <input type="text" placeholder="username"/>
+                      <input type="password" placeholder="password"/>
+                      <button>login</button>
+                      <p class="message">Not registered? <a href="#">Create an account</a></p>
+                    </form>
+                  </div>
+                </div>
                '''
 
     email = flask.request.form['email']
@@ -63,6 +71,10 @@ def login():
         #return flask.redirect(flask.url_for('protected'))
 
     return 'Bad login'
+
+@app.route('/testing', methods=['GET', 'POST'])
+def testing():
+    return flask.render_template('login.html')
 
 # @app.route('/protected')
 # @flask_login.login_required
@@ -77,7 +89,6 @@ def login():
 # @login_manager.unauthorized_handler
 # def unauthorized_handler():
 #     return 'Unauthorized'
-
 
 @app.route('/')
 def home():
