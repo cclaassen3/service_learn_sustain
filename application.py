@@ -15,8 +15,10 @@ def home():
     return flask.render_template('login.html')
 
 
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+
         #TODO ensure user in database
         if 'username' in session:
         	return flask.render_template('index.html')
@@ -25,7 +27,6 @@ def login():
         	attemptedPass = request.form['password']
         	#cursor.execute("SELECT COUNT(1) FROM users WHERE name = %s", attemptedUser)
         	return flask.redirect('/')
-# -------------------- run app --------------------
 
 @app.route('/registration')
 def registration():
