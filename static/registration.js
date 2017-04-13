@@ -1,12 +1,9 @@
+
 $('#usertype').on('change',function(){
-        if( $(this).val()==="City Scientist"){
-        $("#city").show();
-        $("#state").show();
-        $("#title").show();
+        if($(this).val()==="cityofficial"){
+        $("#otherparams").hide();
         }
         else{
-        $("#city").hide();
-        $("#state").hide();
-        $("#title").hide();
+        $("#otherparams").show();
         }
 });
