@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}" media="screen" />
+
+<div class="add-new-data-point-page">
+  <div class="form">
+    <header style="font-size:26px; font-weight:bold;">Add New Data Point</header>
+    <br><br>
+    <form class="new-data-point-form" method="POST">
+      <label>POI Location Name</label>
+      <select name="city">
+          <option value="Tech Campus">Tech Campus</option>
+          <option value="Sope Creek">Sope Creek</option>
+          </select>
+      <p class="message"><a href="{{ url_for('add_new_poi_location')}}">Add new POI location</a></p><br>
+      <label>Date</label>
+      <input type="date" name="date"></input>
+      <br><br>
+      <label>Data Type</label>
+      <select name="data_type">
+          <option value="Mold">Mold</option>
+          <option value="Air Quality">Air Quality</option>
+          </select>
+      <br><br><br>
+      <button>Submit</button>
+    </form>
+  </div>
+</div>
+
+<!--
+<script language="JavaScript">
+function today() {
+  return todaysdate.getDate()+"-"+(todaysdate.getMonth()+1)+"-"+todaysdate.getYear()
+}
+</script>
+-->

@@ -42,12 +42,34 @@ def login():
         #cursor.execute("SELECT COUNT(1) FROM users WHERE name = %s", attemptedUser)
 
         #TODO ensure user in database and create appropriate instance of user
-        user = User('dummy_username', 'admin')
+        user = User('dummy_username', 'omnipotent')
         return flask.redirect('index')
 
-@app.route('/registration')
+@app.route('/registration', methods=['GET', 'POST'])
 def registration():
-		return flask.render_template('registration.html')
+    if flask.request.method == 'GET':
+        return flask.render_template('registration.html')
+    elif flask.request.method == 'POST':
+        return flask.redirect('index')
+
+@app.route('/add-new-poi-location', methods=['GET', 'POST'])
+def add_new_poi_location():
+    if flask.request.method == 'GET':
+        # if user and user.user_type == "omnipotent":
+        #     return flask.render_template('add_new_poi_location.html')
+        # else:
+        #     return flask.redirect('index')
+        return flask.render_template('add_new_poi_location.html')
+    elif flask.request.method == 'POST':
+        #return flask.redirect('index')
+        return "new poi location added!"
+
+@app.route('/add-new-data-point', methods=['GET', 'POST'])
+def add_new_data_point():
+    if flask.request.method == 'GET':
+        return flask.render_template('add_new_data_point.html')
+    elif flask.request.method == 'POST':
+        return "new data point added!"
 
 
 # -------------------- run app --------------------
