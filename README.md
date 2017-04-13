@@ -1,18 +1,22 @@
 # Service Learn Sustain - 4400 Database Project 2017
 
-to run app:
+to run the app:
 
-1. recommended to use virtual environment to ensure no paths / other vars affected by flask app:
+(i) recommended to use virtualenv to ensure no paths / other vars affected by flask app configuration
 
 	pip install virtualenv
 	cd path/to/service_learn_sustain
 	virtualenv venv
 	source venv/bin/activate
-
-2. to install dependencies:
+	
+(ii) to install project dependencies (REQUIRED)
 
 	pip install -r requirements.txt
+	
+(iii) to run the application in web browser
 
-3. to deactivate virtual environment once done:
+	python application.py (from the service_learn_sustain directory)
+	
+(iv) to deactivate the virtualenv once done
 
 	deactivate
