@@ -1,9 +1,0 @@
-Flask
-psycopg2
-
-# Flask extensions
-Flask-Script
-Flask-SQLAlchemy
-
-neurio
-pyowm
