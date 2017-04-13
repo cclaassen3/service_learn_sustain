@@ -4,16 +4,15 @@
 #
 #    pip-compile --output-file requirements.txt requirements.in
 #
-click==6.7                # via flask
-flask-script==2.0.5
-flask-sqlalchemy==2.1
-flask==0.11.1
-itsdangerous==0.24        # via flask
-jinja2==2.9.4             # via flask
-markupsafe==0.23          # via jinja2
-neurio==0.3.1
-psycopg2==2.6.2
-pyowm==2.6.1
-requests==2.13.0          # via neurio
-sqlalchemy==1.1.5         # via flask-sqlalchemy
-werkzeug==0.11.15         # via flask
+botocore==1.5.2
+click==6.7
+first==2.0.1
+Flask==0.11.1
+Flask-Login==0.4.0
+Flask-Script==2.0.5
+Flask-SQLAlchemy==2.1
+itsdangerous==0.24
+Jinja2==2.9.4
+MarkupSafe==0.23
+pip-tools==1.8.0
+Werkzeug==0.11.15

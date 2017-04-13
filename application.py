@@ -11,16 +11,20 @@ app = flask.Flask(__name__)
 
 @app.route('/')
 def home():
-    return flask.render_template('index.html')
+    return flask.redirect('login')
 
 
 @app.route('/login', methods=['GET', 'POST'])
-def testing():
+def login():
     if flask.request.method == 'GET':
         return flask.render_template('login.html')
     elif flask.request.method == "POST":
         #TODO ensure user in database
-        return flask.redirect('/')
+        return flask.redirect('index')
+
+@app.route('/index')
+def index():
+    return flask.render_template('index.html')
 
 
 
