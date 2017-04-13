@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<script type="text/javascript" src="{{ url_for('static', filename='registration.js')}}"></script>
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}" media="screen" />
+
+<div class="registration-page">
+  <div class="form">
+    <form class="registration-form">
+      <input type="text" id="username" placeholder="username"/>
+      <input type="text" id="email" placeholder="email address"/>
+      <input type="password" id="password" placeholder="password"/>
+      <input type="password" id="confpassword" placeholder="confirm password"/>
+      <p> User Type </p> 
+          <select name="usertype">
+          <option value="cityofficial">City Official</option>
+          <option value="cityscientist">City Scientist</option>
+          </select>
+      <br><br>
+      <input type="text" id="city" placeholder="City"/>
+      <input type="text" id = "state" placeholder="State"/>
+      <input type = "text" id = "title" placeholder="Title"/>
+      <button>create</button>
+      <p class="message">Already registered? <a href="{{ url_for('home')}}">Sign In</a></p>
+    </form>
+  </div>
+</div>
