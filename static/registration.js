@@ -1,6 +1,6 @@
 
 $('#usertype').on('change',function(){
-        if($(this).val()==="cityofficial"){
+        if($(this).val()== "cityofficial"){
         $("#otherparams").hide();
         }
         else{

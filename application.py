@@ -1,5 +1,6 @@
 import flask
 import flask_login
+import MySQLdb
 
 # -------------------- define app --------------------
 
@@ -11,8 +12,8 @@ class User:
         self.username = username
         self.user_type = user_type
 
-#db = MySQLdb.connect(host="localhost", user="root", passwd="", db="test")
-#cursor = db.cursor()
+db = MySQLdb.connect(host="academic-mysql.cc.gatech.edu", user="cs4400_Group_20", passwd="3lZwg9Kk", db="cs4400_Group_20")
+cursor = db.cursor()
 
 # -------------------- routes --------------------
 
@@ -37,10 +38,12 @@ def login():
         return flask.render_template('login.html')
 
     elif flask.request.method == "POST":
-        #attemptedUser = flask.request.form['username']
-        #attemptedPass = flask.request.form['password']
-        #cursor.execute("SELECT COUNT(1) FROM users WHERE name = %s", attemptedUser)
-
+        attemptedUser = flask.request.form['username']
+        attemptedPass = flask.request.form['password']
+        try:
+            cursor.execute("SELECT COUNT(1) FROM users WHERE name = %s", attemptedUser)
+        except: 
+            print("Not in db")
         #TODO ensure user in database and create appropriate instance of user
         user = User('dummy_username', 'omnipotent')
         return flask.redirect('index')
@@ -49,8 +52,12 @@ def login():
 def registration():
     if flask.request.method == 'GET':
         return flask.render_template('registration.html')
-    elif flask.request.method == 'POST':
-        return flask.redirect('index')
+        insertedUser = flask.request.form['username']
+        insertedPass = flask.request.form['password']
+        insertedEmail = flask.request.form['email']
+        cursor.execute("INSERT INTO user(username, password, email) VALUES(insertedUser, insertedPass, insertedEmail")
+        #elif flask.request.method == 'POST':
+        #return flask.redirect('index')
 
 @app.route('/add-new-poi-location', methods=['GET', 'POST'])
 def add_new_poi_location():
