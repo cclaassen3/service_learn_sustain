@@ -3,10 +3,11 @@
 
 <div class="login-page">
   <div class="form">
-    <form class="login-form" method="POST">
-      <input type="text" id="username" placeholder="username"/>
-      <input type="password" id="password" placeholder="password"/>
-      <button method="POST">login</button>
+    <form class="login-form" action = "login" method="POST">
+      <input type="text" name = "username" id="username" placeholder="username"/>
+      <input type="password" name = "password" id="password" placeholder="password"/>
+      <button type = "submit">login</button>
+      <p id = "feedback"  style="color: red">{{error}}</p>
       <p class="message">Not registered? <a href="registration">Create an account</a></p>
     </form>
   </div>

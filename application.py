@@ -3,6 +3,7 @@ import flask_login
 import db
 from flask import render_template, json, request, Response
 import MySQLdb
+import easygui
 
 # -------------------- define app --------------------
 
@@ -19,7 +20,7 @@ class User:
 @app.route('/')
 def home():
 	db.setUp()
-	return flask.redirect('login')
+	return flask.render_template('login.html')
 
 @app.route('/index')
 def index():
@@ -28,25 +29,22 @@ def index():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-
-    global user
-    if user:
-    #if 'username' in session:
-        return flask.redirect('/index')
-
-    elif flask.request.method == 'GET':
-        return flask.render_template('login.html')
-
-    elif flask.request.method == "POST":
+    if flask.request.method == "POST":
         attemptedUser = flask.request.form['username']
         attemptedPass = flask.request.form['password']
-        try:
-            cursor.execute("SELECT COUNT(1) FROM users WHERE name = %s", attemptedUser)
-        except: 
-            render_template("registration.html")
+        message = db.login(attemptedUser, attemptedPass)
+        if message == 0: 
+        	m1 = "Invalid Credentials"
+        	return flask.render_template('login.html', error=m1)
+        if message == 1:
+        	m1 = 1
+        	return flask.render_template('cityscientist.html')
+        if message == 2:
+        	m2 = 2
+        	return flask.render_template('cityofficial.html')
+        #else: 
+        #return flask.render_template('index.html')
         #TODO ensure user in database and create appropriate instance of user
-        user = User('dummy_username', 'omnipotent')
-        return flask.redirect('index')
 
 @app.route('/registration')
 def registration():
