@@ -1,5 +1,6 @@
 import flask
 import flask_login
+import db
 from flask import render_template, json, request, Response
 import MySQLdb
 
@@ -17,7 +18,8 @@ class User:
 
 @app.route('/')
 def home():
-    return flask.redirect('login')
+	db.setUp()
+	return flask.redirect('login')
 
 @app.route('/index')
 def index():
@@ -50,14 +52,14 @@ def login():
 def registration():
 		return flask.render_template('registration.html')
 
-@app.route('/postReg', methods=['POST', 'GET'])
+@app.route('/postReg', methods=["POST", "GET"])
 def postReg(): 
-		#if flask.request.method == 'POST':
-			insertedUser = flask.request.form['username']
-			insertedPass = flask.request.form['password']
-			insertedEmail = flask.request.form['email']
-			insertedType = flask.request.form['usertype']
-			db.register(insertedUser, insertedPass, insertedEmail, insertedType)
+		if request.method == "POST":
+			insertedUser = request.form['username']
+			insertedPass = request.form['password']
+			insertedEmail = request.form['email']
+			insertedType = request.form['usertype']
+			db.register(insertedUser, insertedEmail, insertedPass, insertedType)
 			return flask.render_template('login.html')
         #elif flask.request.method == 'POST':
         #return flask.redirect('index')

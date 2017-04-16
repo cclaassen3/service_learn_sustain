@@ -6,12 +6,14 @@ database = None
 cursor = None
 
 def setUp():
-	global db
+	global database
 	global cursor
+	global connected
+
 	if not connected:
 		try:
-			db = MySQLdb.connect(host="academic-mysql.cc.gatech.edu", user="cs4400_Group_20", passwd="3lZwg9Kk", db="cs4400_Group_20")
-			cursor = db.cursor()
+			database = MySQLdb.connect(host="academic-mysql.cc.gatech.edu", user="cs4400_Group_20", passwd="3lZwg9Kk", db="cs4400_Group_20")
+			cursor = database.cursor()
 			connected = True
 		except Exception as e:
 			connected = False
@@ -24,5 +26,6 @@ def end():
 
 
 def register(username, email, password, usertype):
-	cursor.execute("INSERT INTO user(username, email, password, usertype) VALUES(%s, %s, %s, %s)", insertedUser, insertedEmail, insertedPass, insertedType)
+	query = "INSERT INTO user(username, email, password, usertype) VALUES(%s, %s, %s, %s)"
+	response=cursor.execute(query, (username, email, password, usertype))
 	database.commit()
