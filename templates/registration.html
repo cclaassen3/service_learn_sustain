@@ -6,7 +6,7 @@
 
 <div class="registration-page">
   <div class="form">
-    <form class="registration-form" method="POST">
+    <form class="registration-form" action= "postReg" method="POST">
       <input type="text" id="username" placeholder="username"/>
       <input type="text" id="email" placeholder="email address"/>
       <input type="password" id="password" placeholder="password"/>
@@ -22,7 +22,7 @@
       <input id = "state" type="text" placeholder="State"/>
       <input id = "title" type = "text" placeholder="Title"/>
       </div>
-      <button>create</button>
+      <button id="postReg" type="submit">Register</button>
       <p class="message">Already registered? <a href="{{ url_for('login')}}">Sign In</a></p>
     </form>
   </div>

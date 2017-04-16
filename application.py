@@ -1,5 +1,6 @@
 import flask
 import flask_login
+from flask import render_template, json, request, Response
 import MySQLdb
 
 # -------------------- define app --------------------
@@ -12,10 +13,7 @@ class User:
         self.username = username
         self.user_type = user_type
 
-db = MySQLdb.connect(host="academic-mysql.cc.gatech.edu", user="cs4400_Group_20", passwd="3lZwg9Kk", db="cs4400_Group_20")
-cursor = db.cursor()
-
-# -------------------- routes --------------------
+# -------------------- routes -------------------
 
 @app.route('/')
 def home():
@@ -43,19 +41,24 @@ def login():
         try:
             cursor.execute("SELECT COUNT(1) FROM users WHERE name = %s", attemptedUser)
         except: 
-            print("Not in db")
+            render_template("registration.html")
         #TODO ensure user in database and create appropriate instance of user
         user = User('dummy_username', 'omnipotent')
         return flask.redirect('index')
 
-@app.route('/registration', methods=['GET', 'POST'])
+@app.route('/registration')
 def registration():
-    if flask.request.method == 'GET':
-        return flask.render_template('registration.html')
-        insertedUser = flask.request.form['username']
-        insertedPass = flask.request.form['password']
-        insertedEmail = flask.request.form['email']
-        cursor.execute("INSERT INTO user(username, password, email) VALUES(insertedUser, insertedPass, insertedEmail")
+		return flask.render_template('registration.html')
+
+@app.route('/postReg', methods=['POST', 'GET'])
+def postReg(): 
+		#if flask.request.method == 'POST':
+			insertedUser = flask.request.form['username']
+			insertedPass = flask.request.form['password']
+			insertedEmail = flask.request.form['email']
+			insertedType = flask.request.form['usertype']
+			db.register(insertedUser, insertedPass, insertedEmail, insertedType)
+			return flask.render_template('login.html')
         #elif flask.request.method == 'POST':
         #return flask.redirect('index')
 
@@ -64,7 +67,7 @@ def add_new_poi_location():
     if flask.request.method == 'GET':
         # if user and user.user_type == "omnipotent":
         #     return flask.render_template('add_new_poi_location.html')
-        # else:
+        # else: 
         #     return flask.redirect('index')
         return flask.render_template('add_new_poi_location.html')
     elif flask.request.method == 'POST':
