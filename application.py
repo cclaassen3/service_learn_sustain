@@ -2,7 +2,6 @@ from flask import render_template, json, request, Response
 import flask_login
 import MySQLdb
 import easygui
-import routes
 import flask
 import db
 
@@ -35,15 +34,9 @@ def login():
         attemptedUser = flask.request.form['username']
         attemptedPass = flask.request.form['password']
         message = db.login(attemptedUser, attemptedPass)
-        if message == 0: 
-        	m1 = "Invalid Credentials"
-        	return flask.render_template('login.html', error=m1)
-        if message == 1:
-        	m1 = 1
-        	return flask.render_template('cityscientist.html')
-        if message == 2:
-        	m2 = 2
-        	return flask.render_template('cityofficial.html')
+        if  not message: return flask.render_template('login.html', error="Invalid Credentials")
+        elif message == 1: return flask.render_template('cityscientist.html')
+        elif message == 2: return flask.render_template('cityofficial.html')
 
 @app.route('/register', methods=["POST", "GET"])
 def registration():
@@ -66,7 +59,7 @@ def add_new_poi_location():
         city = request.form['city']
         state = request.form['state']
         zipCode = request.form['zip_code']
-        value = request.form['value']
+        db.addNewPOILocation(locationName, city, state, zipCode)
         return "new poi location added!"
 
 @app.route('/add-new-data-point', methods=['GET', 'POST'])
@@ -77,6 +70,8 @@ def add_new_data_point():
         poiLocation = request.form['poi_location']
         date = request.form['date']
         dataType = request.form['data_type']
+        value = request.form['value']
+        db.addNewDataPoint(poiLocation, date, dataType, value)
         return "new data point added!"
 
 

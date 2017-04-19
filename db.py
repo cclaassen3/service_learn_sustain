@@ -22,7 +22,7 @@ def setUp():
 		except Exception as e:
 			connected = False
 
-		print "DB connection established: {}".format(connected)
+	print "DB connection established: {}".format(connected)
 
 def end():
 	global connected
@@ -30,13 +30,15 @@ def end():
 		database.close()
 		connected = False
 
+	print "DB connection closed: {}".format(not connected)
 
-# ---------- data retrieval ----------
+
+# ---------- user management ----------
 
 def login(username, password):
 	query = "SELECT * FROM user WHERE username = %s AND password = %s"
 	response = cursor.execute(query, (username, password))
-	if response == 0:
+	if  not response:
 		return 0
 	else: 
 		query = "SELECT usertype FROM user WHERE username = %s AND password = %s"
@@ -47,10 +49,27 @@ def login(username, password):
 		else: 
 			return 2
 
-
-# ---------- data updates -----------
-
 def register(username, email, password, usertype):
 	query = "INSERT INTO user(username, email, password, usertype) VALUES(%s, %s, %s, %s)"
 	response=cursor.execute(query, (username, email, password, usertype))
 	database.commit()
+
+
+# ---------- adding new data ----------
+
+def addNewPOILocation(locationName, city, state, zipCode):
+	return None
+
+
+def addNewDataPoint(poiLocation, date, dataType, value):
+	return None
+
+
+
+
+
+
+
+
+
+
