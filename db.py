@@ -1,9 +1,13 @@
+import db_config
 import MySQLdb
 
+# ---------- variable setup ----------
 
 connected = False
 database = None
 cursor = None
+
+# ---------- database connection functions ----------
 
 def setUp():
 	global database
@@ -12,11 +16,13 @@ def setUp():
 
 	if not connected:
 		try:
-			database = MySQLdb.connect(host="academic-mysql.cc.gatech.edu", user="cs4400_Group_20", passwd="3lZwg9Kk", db="cs4400_Group_20")
+			database = MySQLdb.connect(host=db_config.host, user=db_config.user, passwd=db_config.passwd, db=db_config.db)
 			cursor = database.cursor()
 			connected = True
 		except Exception as e:
 			connected = False
+
+		print "DB connection established: {}".format(connected)
 
 def end():
 	global connected
@@ -25,10 +31,7 @@ def end():
 		connected = False
 
 
-def register(username, email, password, usertype):
-	query = "INSERT INTO user(username, email, password, usertype) VALUES(%s, %s, %s, %s)"
-	response=cursor.execute(query, (username, email, password, usertype))
-	database.commit()
+# ---------- data retrieval ----------
 
 def login(username, password):
 	query = "SELECT * FROM user WHERE username = %s AND password = %s"
@@ -45,3 +48,9 @@ def login(username, password):
 			return 2
 
 
+# ---------- data updates -----------
+
+def register(username, email, password, usertype):
+	query = "INSERT INTO user(username, email, password, usertype) VALUES(%s, %s, %s, %s)"
+	response=cursor.execute(query, (username, email, password, usertype))
+	database.commit()

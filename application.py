@@ -1,9 +1,11 @@
-import flask
-import flask_login
-import db
 from flask import render_template, json, request, Response
+import flask_login
 import MySQLdb
 import easygui
+import routes
+import flask
+import db
+
 
 # -------------------- define app --------------------
 
@@ -19,17 +21,17 @@ class User:
 
 @app.route('/')
 def home():
-	db.setUp()
-	return flask.render_template('login.html')
+    return flask.redirect('login')
 
 @app.route('/index')
 def index():
-    if not user: return flask.redirect('login')
     return flask.render_template('index.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    if flask.request.method == "POST":
+    if flask.request.method == "GET":
+        return flask.render_template("login.html")
+    elif flask.request.method == "POST":
         attemptedUser = flask.request.form['username']
         attemptedPass = flask.request.form['password']
         message = db.login(attemptedUser, attemptedPass)
@@ -42,36 +44,29 @@ def login():
         if message == 2:
         	m2 = 2
         	return flask.render_template('cityofficial.html')
-        #else: 
-        #return flask.render_template('index.html')
-        #TODO ensure user in database and create appropriate instance of user
 
-@app.route('/registration')
+@app.route('/register', methods=["POST", "GET"])
 def registration():
-		return flask.render_template('registration.html')
-
-@app.route('/postReg', methods=["POST", "GET"])
-def postReg(): 
-		if request.method == "POST":
-			insertedUser = request.form['username']
-			insertedPass = request.form['password']
-			insertedEmail = request.form['email']
-			insertedType = request.form['usertype']
-			db.register(insertedUser, insertedEmail, insertedPass, insertedType)
-			return flask.render_template('login.html')
-        #elif flask.request.method == 'POST':
-        #return flask.redirect('index')
+    if request.method == "GET":
+        return flask.render_template('registration.html')
+    if request.method == "POST":
+        insertedUser = request.form['username']
+        insertedPass = request.form['password']
+        insertedEmail = request.form['email']
+        insertedType = request.form['usertype']
+        db.register(insertedUser, insertedEmail, insertedPass, insertedType)
+        return flask.render_template('login.html')
 
 @app.route('/add-new-poi-location', methods=['GET', 'POST'])
 def add_new_poi_location():
     if flask.request.method == 'GET':
-        # if user and user.user_type == "omnipotent":
-        #     return flask.render_template('add_new_poi_location.html')
-        # else: 
-        #     return flask.redirect('index')
         return flask.render_template('add_new_poi_location.html')
     elif flask.request.method == 'POST':
-        #return flask.redirect('index')
+        locationName = request.form['location_name']
+        city = request.form['city']
+        state = request.form['state']
+        zipCode = request.form['zip_code']
+        value = request.form['value']
         return "new poi location added!"
 
 @app.route('/add-new-data-point', methods=['GET', 'POST'])
@@ -79,10 +74,15 @@ def add_new_data_point():
     if flask.request.method == 'GET':
         return flask.render_template('add_new_data_point.html')
     elif flask.request.method == 'POST':
+        poiLocation = request.form['poi_location']
+        date = request.form['date']
+        dataType = request.form['data_type']
         return "new data point added!"
 
 
 # -------------------- run app --------------------
 
-if __name__ == '__main__': app.run()
+if __name__ == '__main__': 
+    db.setUp()
+    app.run()
 

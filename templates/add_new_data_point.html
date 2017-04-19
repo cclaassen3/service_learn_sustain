@@ -5,21 +5,21 @@
   <div class="form">
     <header style="font-size:26px; font-weight:bold;">Add New Data Point</header>
     <br><br>
-    <form class="new-data-point-form" method="POST">
+    <form class="new-data-point-form" action="add-new-data-point" method="POST">
       <label>POI Location Name</label>
-      <select name="city">
+        <select name="poi_location">
           <option value="Tech Campus">Tech Campus</option>
           <option value="Sope Creek">Sope Creek</option>
-          </select>
+        </select>
       <p class="message"><a href="{{ url_for('add_new_poi_location')}}">Add new POI location</a></p><br>
       <label>Date</label>
-      <input type="date" name="date"></input>
-      <br><br>
+        <input type="date" name="date"></input><br><br>
       <label>Data Type</label>
-      <select name="data_type">
+        <select name="data_type">
           <option value="Mold">Mold</option>
           <option value="Air Quality">Air Quality</option>
-          </select>
+        </select>
+      <input type="number" name="value" id="value" placeholder="value">
       <br><br><br>
       <button>Submit</button>
     </form>
