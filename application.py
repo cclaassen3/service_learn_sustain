@@ -102,6 +102,7 @@ def add_new_data_point():
         date = request.form['date']
         dataType = request.form['data_type']
         value = request.form['value']
+        print "good before adding"
         db.addNewDataPoint(poiLocation, date, dataType, value)
         return "new data point added!"
 

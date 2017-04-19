@@ -55,7 +55,7 @@ def login(username, password):
 def register(username, email, password, usertype):
 	try:
 		query = "INSERT INTO user(username, email, password, usertype) VALUES(%s, %s, %s, %s)"
-		response=cursor.execute(query, (username, email, password, usertype))
+		response = cursor.execute(query, (username, email, password, usertype))
 		database.commit()
 		return True
 	except:
@@ -68,8 +68,17 @@ def addNewPOILocation(locationName, city, state, zipCode):
 	return None
 
 
-def addNewDataPoint(poiLocation, date, dataType, value):
-	return None
+def addNewDataPoint(poiLocation, date_time, dataType, value):
+	try:
+		query = "INSERT into dataPoint(poi_location_name, date_time, data_type, data_value, accepted) VALUES(%s, %s, %s, %s, 0)"
+		response = cursor.execute(query, (poiLocation, date_time, dataType, value))
+		database.commit()
+		print response
+		return True
+	except:
+		print "error"
+		return False
+		
 
 
 
