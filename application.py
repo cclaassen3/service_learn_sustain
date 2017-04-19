@@ -16,6 +16,13 @@ class User:
         self.username = username
         self.user_type = user_type
 
+'''
+  user_types:
+    1 --> City Scientist
+    2 --> City Official
+    3 --> Admin
+'''
+
 # -------------------- routes -------------------
 
 @app.route('/')
@@ -33,10 +40,13 @@ def login():
     elif flask.request.method == "POST":
         attemptedUser = flask.request.form['username']
         attemptedPass = flask.request.form['password']
-        message = db.login(attemptedUser, attemptedPass)
-        if  not message: return flask.render_template('login.html', error="Invalid Credentials")
-        elif message == 1: return flask.render_template('cityscientist.html')
-        elif message == 2: return flask.render_template('cityofficial.html')
+        user_type = db.login(attemptedUser, attemptedPass)
+        if not user_type: return flask.render_template('login.html', error="Invalid Credentials")
+        global user
+        user = User(attemptedUser, user_type)
+        if user_type == 1: return flask.render_template('cityscientist.html')
+        elif user_type == 2: return flask.render_template('cityofficial.html')
+        elif user_type == 3: return flask.render_template('admin')
 
 @app.route('/register', methods=["POST", "GET"])
 def registration():
@@ -47,11 +57,14 @@ def registration():
         insertedPass = request.form['password']
         insertedEmail = request.form['email']
         insertedType = request.form['usertype']
-        db.register(insertedUser, insertedEmail, insertedPass, insertedType)
+        accepted = db.register(insertedUser, insertedEmail, insertedPass, insertedType)
+        if not accepted: return flask.render_template('registration.html', error="Registration Failure")
         return flask.render_template('login.html')
 
 @app.route('/add-new-poi-location', methods=['GET', 'POST'])
 def add_new_poi_location():
+    if not user: return flask.redirect('login')
+    if user.user_type != 1: return flask.render_template('unauthorized.html')
     if flask.request.method == 'GET':
         return flask.render_template('add_new_poi_location.html')
     elif flask.request.method == 'POST':
@@ -64,6 +77,8 @@ def add_new_poi_location():
 
 @app.route('/add-new-data-point', methods=['GET', 'POST'])
 def add_new_data_point():
+    if not user: return flask.redirect('login')
+    if user.user_type != 1: return flask.render_template('unauthorized.html')
     if flask.request.method == 'GET':
         return flask.render_template('add_new_data_point.html')
     elif flask.request.method == 'POST':

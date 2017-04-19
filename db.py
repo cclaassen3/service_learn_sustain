@@ -36,23 +36,30 @@ def end():
 # ---------- user management ----------
 
 def login(username, password):
+
 	query = "SELECT * FROM user WHERE username = %s AND password = %s"
 	response = cursor.execute(query, (username, password))
 	if  not response:
 		return 0
-	else: 
+	else:
 		query = "SELECT usertype FROM user WHERE username = %s AND password = %s"
 		response = cursor.execute(query, (username, password))
 		response = cursor.fetchone()
 		if response[0] == 'City Scientist':
 			return 1
-		else: 
+		elif response[0] == 'City Official':
 			return 2
+		elif response[0] == 'Admin':
+			return 3
 
 def register(username, email, password, usertype):
-	query = "INSERT INTO user(username, email, password, usertype) VALUES(%s, %s, %s, %s)"
-	response=cursor.execute(query, (username, email, password, usertype))
-	database.commit()
+	try:
+		query = "INSERT INTO user(username, email, password, usertype) VALUES(%s, %s, %s, %s)"
+		response=cursor.execute(query, (username, email, password, usertype))
+		database.commit()
+		return True
+	except:
+		return False
 
 
 # ---------- adding new data ----------
