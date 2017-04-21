@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}" media="screen" />
 
-<header> <b> Welcome City Official, what would you like to do? </b> </header>
-
-<p class="message">Filter/Search POI <a href="{{ url_for('index')}}">Sending you to the index page for now</a></p>
-<p class="message">POI Report <a href="{{ url_for('index')}}">Sending you to the index page for now</a></p>
-
-
+<div class="form" style="margin-top:100px">
+    <h2> <b> Welcome, City Official!</b> </h2>
+    <br>
+    <a href="{{ url_for('index')}}">Filter / Search POI (TODO)</a>
+    <br><br>
+    <a href="{{ url_for('index')}}">POI Report (TODO)</a>
+</div>

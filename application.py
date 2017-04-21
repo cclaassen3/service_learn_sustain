@@ -1,4 +1,5 @@
 from flask import render_template, json, request, Response
+from datetime import datetime
 import flask_login
 import MySQLdb
 import easygui
@@ -99,17 +100,17 @@ def add_new_data_point():
     if permissions_enabled and not user: return flask.redirect('login')
     if permissions_enabled and user.user_type != 1: return flask.render_template('unauthorized.html')
     if flask.request.method == 'GET':
-        locations = db.retrievePOILocations()
-        data_types = db.retrieveDataTypes()
-        return flask.render_template('add_new_data_point.html', locations=locations, data_types=data_types)
+        return flask.render_template('add_new_data_point.html', locations=db.retrievePOILocations(), data_types=db.retrieveDataTypes())
     elif flask.request.method == 'POST':
         poiLocation = request.form['poi_location'].replace('+', ' ')
-        date = request.form['date']
+        date_time = request.form['datetime'].replace('T', ' ')
         dataType = request.form['data_type'].replace('+', ' ')
         value = request.form['value']
-        if not date or not value: return flask.render_template('add_new_data_point.html', locations=locations, data_types=data_types, error="Empty Fields not Allowed")
-        success = db.addNewDataPoint(poiLocation, date, dataType, value)
-        if not success: return flask.render_template('add_new_data_point.html', locations=locations, data_types=data_types, error="Failed to Add Data Point")
+        if not date_time or not value: return flask.render_template('add_new_data_point.html', locations=db.retrievePOILocations(), data_types=db.retrieveDataTypes(), error="Empty Fields not Allowed")
+        if datetime.now() < datetime.strptime(str(date_time), '%Y-%m-%d %H:%M'): 
+            return flask.render_template('add_new_data_point.html', locations=db.retrievePOILocations(), data_types=db.retrieveDataTypes(), error="Date/Time Cannot be in the Future")
+        success = db.addNewDataPoint(poiLocation, date_time, dataType, value)
+        if not success: return flask.render_template('add_new_data_point.html', locations=db.retrievePOILocations(), data_types=db.retrieveDataTypes(), error="Failed to Add Data Point")
         return flask.redirect('/cityScientist')
 
 @app.route('/manage-data-points')

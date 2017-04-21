@@ -2,6 +2,8 @@
 
 to run the app:
 
+** run with Python 2.7 **
+
 (i) recommended to use virtualenv to ensure no paths / other vars affected by flask app configuration
 
 	pip install virtualenv

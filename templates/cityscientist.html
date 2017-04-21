@@ -1,9 +1,12 @@
 <!DOCTYPE html>
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}" media="screen" />
 
-<header> <b> Welcome City Scientist, what would you like to do? </b> </header>
-
-<p> <a href="{{ url_for('add_new_data_point')}}">Add a new data point</a></p>
-<p> <a href="{{ url_for('add_new_poi_location')}}">Add a new POI location</a></p>
+<div class="form" style="margin-top:100px">
+    <h2> <b> Welcome, City Scientist!</b> </h2>
+    <br>
+    <a href="{{ url_for('add_new_data_point')}}">Add New Data Point</a>
+    <br><br>
+    <a href="{{ url_for('add_new_poi_location')}}">Add New POI Location</a>
+</div>
 
 

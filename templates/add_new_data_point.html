@@ -13,8 +13,8 @@
           {% endfor %}
         </select>
       <p class="message"><a href="{{ url_for('add_new_poi_location')}}">Add new POI location</a></p><br>
-      <label>Date</label>
-        <input type="date" name="date"></input><br><br>
+      <label>Date / Time</label>
+        <input type="datetime-local" name="datetime"></input><br><br>
       <label>Data Type</label>
         <select name="data_type">
           {% for type in data_types %}
