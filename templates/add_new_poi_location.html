@@ -3,23 +3,22 @@
 
 <div class="add-new-poi-location-page">
   <div class="form">
-    <header style="font-size:26px; font-weight:bold;">Add New POI Location</header>
-    <br><br>
-    <form class="new-data-point-form" method="POST">
-      <input type="text" id="location_name" placeholder="POI Location Name"/>
+    <header style="font-size:26px; font-weight:bold;">Add New POI Location</header><br><br>
+    <form class="new-data-point-form" action="add-new-poi-location" method="POST">
+      <input type="text" id="location_name" name="location_name" placeholder="POI Location Name"/>
       <label>City</label>
-      <select name="city">
+        <select name="city">
           <option value="Atlanta">Atlanta</option>
           <option value="Seattle">Seattle</option>
-          </select>
+        </select>
       <br><br>
       <label>State</label>
-      <select name="state">
+        <select name="state">
           <option value="Georgia">Georgia</option>
           <option value="Washington">Washington</option>
-          </select>
+        </select>
       <br><br>
-      <input type="text" id="zip_code" placeholder="Zip Code"/>
+      <input type="text" id="zip_code" name="zip_code" placeholder="Zip Code"/>
       <button>Submit</button>
     </form>
   </div>

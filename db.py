@@ -1,9 +1,13 @@
+import db_config
 import MySQLdb
 
+# ---------- variable setup ----------
 
 connected = False
 database = None
 cursor = None
+
+# ---------- database connection functions ----------
 
 def setUp():
 	global database
@@ -12,11 +16,13 @@ def setUp():
 
 	if not connected:
 		try:
-			database = MySQLdb.connect(host="academic-mysql.cc.gatech.edu", user="cs4400_Group_20", passwd="3lZwg9Kk", db="cs4400_Group_20")
+			database = MySQLdb.connect(host=db_config.host, user=db_config.user, passwd=db_config.passwd, db=db_config.db)
 			cursor = database.cursor()
 			connected = True
 		except Exception as e:
 			connected = False
+
+	print "DB connection established: {}".format(connected)
 
 def end():
 	global connected
@@ -24,24 +30,62 @@ def end():
 		database.close()
 		connected = False
 
+	print "DB connection closed: {}".format(not connected)
 
-def register(username, email, password, usertype):
-	query = "INSERT INTO user(username, email, password, usertype) VALUES(%s, %s, %s, %s)"
-	response=cursor.execute(query, (username, email, password, usertype))
-	database.commit()
+
+# ---------- user management ----------
 
 def login(username, password):
+
 	query = "SELECT * FROM user WHERE username = %s AND password = %s"
 	response = cursor.execute(query, (username, password))
-	if response == 0:
+	if  not response:
 		return 0
-	else: 
+	else:
 		query = "SELECT usertype FROM user WHERE username = %s AND password = %s"
 		response = cursor.execute(query, (username, password))
 		response = cursor.fetchone()
 		if response[0] == 'City Scientist':
 			return 1
-		else: 
+		elif response[0] == 'City Official':
 			return 2
+		elif response[0] == 'Admin':
+			return 3
+
+def register(username, email, password, usertype):
+	try:
+		query = "INSERT INTO user(username, email, password, usertype) VALUES(%s, %s, %s, %s)"
+		response = cursor.execute(query, (username, email, password, usertype))
+		database.commit()
+		return True
+	except:
+		return False
+
+
+# ---------- adding new data ----------
+
+def addNewPOILocation(locationName, city, state, zipCode):
+	return None
+
+
+def addNewDataPoint(poiLocation, date_time, dataType, value):
+	try:
+		query = "INSERT into dataPoint(poi_location_name, date_time, data_type, data_value, accepted) VALUES(%s, %s, %s, %s, 0)"
+		response = cursor.execute(query, (poiLocation, date_time, dataType, value))
+		database.commit()
+		print response
+		return True
+	except:
+		print "error"
+		return False
+		
+
+
+
+
+
+
+
+
 
 
