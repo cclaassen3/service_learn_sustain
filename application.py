@@ -88,8 +88,9 @@ def add_new_poi_location():
         city = request.form['city']
         state = request.form['state']
         zipCode = request.form['zip_code']
-        db.addNewPOILocation(locationName, city, state, zipCode)
-        return "new poi location added!"
+        success = db.addNewPOILocation(locationName, city, state, zipCode)
+        if not success: return flask.render_template('add_new_poi_location.html', error="Failed to Add POI Location")
+        return flask.redirect('/cityScientist')
 
 @app.route('/add-new-data-point', methods=['GET', 'POST'])
 def add_new_data_point():
@@ -102,9 +103,14 @@ def add_new_data_point():
         date = request.form['date']
         dataType = request.form['data_type']
         value = request.form['value']
-        print "good before adding"
-        db.addNewDataPoint(poiLocation, date, dataType, value)
-        return "new data point added!"
+        success = db.addNewDataPoint(poiLocation, date, dataType, value)
+        if not success: return flask.render_template('add_new_data_point.html', error="Failed to Add Data Point")
+        return flask.redirect('/cityScientist')
+
+@app.route('/manage-data-points')
+def manage_data_points():
+    data_points = db.retrieveDataPoints()
+    return render_template('manage_data_points.html', my_list=data_points)
 
 
 # -------------------- run app --------------------

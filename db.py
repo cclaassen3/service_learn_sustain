@@ -65,22 +65,31 @@ def register(username, email, password, usertype):
 # ---------- adding new data ----------
 
 def addNewPOILocation(locationName, city, state, zipCode):
-	return None
-
+	try:
+		query = "INSERT into poi(location_name, zip_code, city, state, flag) VALUES(%s, %s, %s, %s, 0)"
+		response = cursor.execute(query, (locationName, zipCode, city, state))
+		database.commit()
+		return True
+	except:
+		return False
 
 def addNewDataPoint(poiLocation, date_time, dataType, value):
 	try:
 		query = "INSERT into dataPoint(poi_location_name, date_time, data_type, data_value, accepted) VALUES(%s, %s, %s, %s, 0)"
 		response = cursor.execute(query, (poiLocation, date_time, dataType, value))
 		database.commit()
-		print response
 		return True
 	except:
-		print "error"
 		return False
 		
 
 
+# ---------- fetch data -----------
+
+def retrieveDataPoints():
+	query = "SELECT * FROM dataPoint WHERE accepted=0"
+	cursor.execute(query)
+	return cursor.fetchall()
 
 
 
