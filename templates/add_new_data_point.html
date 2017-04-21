@@ -8,22 +8,23 @@
     <form class="new-data-point-form" action="add-new-data-point" method="POST">
       <label>POI Location Name</label>
         <select name="poi_location">
-          <option value="Emory">Emory</option>
-          <option value="Georgia Tech">Georgia Tech</option>
-          <option value="GSU">GSU</option>
-          <option value="Uchicago">U Chicago</option>
+          {% for location in locations %}
+            <option value={{ location[0].replace(' ', '+') }}>{{ location[0] }}</option>
+          {% endfor %}
         </select>
       <p class="message"><a href="{{ url_for('add_new_poi_location')}}">Add new POI location</a></p><br>
       <label>Date</label>
         <input type="date" name="date"></input><br><br>
       <label>Data Type</label>
         <select name="data_type">
-          <option value="Mold">Mold</option>
-          <option value="Air Quality">Air Quality</option>
+          {% for type in data_types %}
+          <option value={{ type[0].replace(' ', '+') }}>{{ type[0] }}</option>
+          {% endfor %}
         </select>
       <input type="number" name="value" id="value" placeholder="value">
       <br><br><br>
       <button>Submit</button>
+      <p id = "feedback"  style="color: red">{{error}}</p>
     </form>
   </div>
 </div>

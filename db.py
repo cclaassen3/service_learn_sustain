@@ -68,6 +68,7 @@ def addNewPOILocation(locationName, city, state, zipCode):
 	try:
 		query = "INSERT into poi(location_name, zip_code, city, state, flag) VALUES(%s, %s, %s, %s, 0)"
 		response = cursor.execute(query, (locationName, zipCode, city, state))
+		print "response:", response
 		database.commit()
 		return True
 	except:
@@ -77,6 +78,7 @@ def addNewDataPoint(poiLocation, date_time, dataType, value):
 	try:
 		query = "INSERT into dataPoint(poi_location_name, date_time, data_type, data_value, accepted) VALUES(%s, %s, %s, %s, 0)"
 		response = cursor.execute(query, (poiLocation, date_time, dataType, value))
+		print "response:", response
 		database.commit()
 		return True
 	except:
@@ -89,7 +91,41 @@ def addNewDataPoint(poiLocation, date_time, dataType, value):
 def retrieveDataPoints():
 	query = "SELECT * FROM dataPoint WHERE accepted=0"
 	cursor.execute(query)
+	database.commit()
 	return cursor.fetchall()
+
+def retrievePOILocations():
+	query = "SELECT location_name FROM poi"
+	cursor.execute(query)
+	database.commit()
+	return cursor.fetchall()
+
+def retrieveDataTypes():
+	query = "SELECT * FROM dataType"
+	cursor.execute(query)
+	database.commit()
+	return cursor.fetchall()
+
+def retrieveCities():
+	query = "SELECT city FROM cityState"
+	cursor.execute(query)
+	database.commit()
+	return cursor.fetchall()
+
+def retrieveStates():
+	query = "SELECT state FROM cityState"
+	cursor.execute(query)
+	database.commit()
+	return cursor.fetchall()
+
+def existsCityState(city, state):
+	query = "SELECT * FROM cityState WHERE city=%s AND state=%s"
+	cursor.execute(query, (city, state))
+	database.commit()
+	return len(cursor.fetchall()) > 0
+
+
+
 
 
 

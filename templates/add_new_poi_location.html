@@ -8,18 +8,21 @@
       <input type="text" id="location_name" name="location_name" placeholder="POI Location Name"/>
       <label>City</label>
         <select name="city">
-          <option value="Atlanta">Atlanta</option>
-          <option value="Chicago">Chicago</option>
+          {% for city in cities %}
+            <option value={{ city[0].replace(' ', '+') }}>{{ city[0] }}</option>
+          {% endfor %}
         </select>
       <br><br>
       <label>State</label>
         <select name="state">
-          <option value="Georgia">Georgia</option>
-          <option value="Illinois">Illinois</option>
+          {% for state in states %}
+            <option value={{ state[0].replace(' ', '+') }}>{{ state[0] }}</option>
+          {% endfor %}
         </select>
       <br><br>
       <input type="text" id="zip_code" name="zip_code" placeholder="Zip Code"/>
       <button>Submit</button>
+      <p id = "feedback"  style="color: red">{{error}}</p>
     </form>
   </div>
 </div>
