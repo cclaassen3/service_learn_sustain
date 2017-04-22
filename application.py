@@ -116,7 +116,17 @@ def add_new_data_point():
 @app.route('/manage-data-points')
 def manage_data_points():
     data_points = db.retrieveDataPoints()
+    for dp in data_points:
+        print dp
     return render_template('manage_data_points.html', data_points=data_points)
+
+@app.route('/change-data-point-filter', methods=['POST'])
+def change_data_point_filter():
+    db.data_point_filter = [str(x) for x in request.form['filter'].split("_")]
+    print db.data_point_filter
+    return flask.redirect('/manage-data-points')
+
+
 
 
 # -------------------- run app --------------------

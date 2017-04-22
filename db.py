@@ -7,6 +7,8 @@ connected = False
 database = None
 cursor = None
 
+data_point_filter = None
+
 # ---------- database connection functions ----------
 
 def setUp():
@@ -89,7 +91,30 @@ def addNewDataPoint(poiLocation, date_time, dataType, value):
 # ---------- fetch data -----------
 
 def retrieveDataPoints():
-	query = "SELECT * FROM dataPoint WHERE accepted=0"
+	#if filter selected, order by that filter
+	if data_point_filter: return filteredDataPoints(data_point_filter)
+	query = "SELECT poi_location_name, data_type, data_value, date_time FROM dataPoint WHERE accepted=False"
+	cursor.execute(query)
+	database.commit()
+	return cursor.fetchall()
+
+def filteredDataPoints(filter_specs):
+	#set ascending / descending
+	ascdesc = 'asc'
+	if filter_specs[0] == 'desc': ascdesc = 'desc'
+	print "changed order"
+
+	#set column to filter by
+	column = 'poi_location_name'
+	if filter_specs[1] == 'data':
+		if filter_specs[2] == 'type': column = 'data_type'
+		elif filter_specs[2] == 'value': column = 'data_value'
+	elif filter_specs[1] == 'date': column = 'date_time'
+
+	print "filter specs:", ascdesc, column
+
+	#retrieve data points
+	query = "SELECT poi_location_name, data_type, data_value, date_time FROM dataPoint WHERE accepted=False order by {} {}".format(column, ascdesc)
 	cursor.execute(query)
 	database.commit()
 	return cursor.fetchall()

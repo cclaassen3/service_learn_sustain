@@ -22,9 +22,11 @@
           {% endfor %}
         </select>
       <input type="number" name="value" id="value" placeholder="value">
-      <br><br><br>
+      <br><br>
       <button>Submit</button>
       <p id = "feedback"  style="color: red">{{error}}</p>
+      <br>
+      <a style="text-align:left" href="{{ url_for('cityScientist')}}">Back</a>
     </form>
   </div>
 </div>

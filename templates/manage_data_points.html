@@ -1,14 +1,30 @@
 <!DOCTYPE html>
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}" media="screen" />
 
+<form class="change_data_point_filter" action="change-data-point-filter" method="POST">
+  <br><header style="font-size:26px; font-weight:bold;">Manage Data Points</header><br>
+  <label>Filter:</label>
+    <select name="filter" onchange="this.form.submit()">
+      <option>Select One...</option>
+      <option value="asc_location_name">Location Name A-Z</option>
+      <option value="desc_location_name">Location Name Z-A</option>
+      <option value="asc_data_type">Data Type A-Z</option>
+      <option value="desc_data_type">Data Type Z-A</option>
+      <option value="asc_data_value">Value Low-High</option>
+      <option value="desc_data_value">Value High-Low</option>
+      <option value="asc_date_time">Time/Date Old-Recent</option>
+      <option value="desc_date_time">Time/Date Recent-Old</option>
+    </select>
+</form>
+<br><br>
 <body>
   <table width="60%">
     <tbody>
       <tr>
         <th>POI Location</th>
-        <th>Date / Time</th>
         <th>Data Type</th>
         <th>Data Value</th>
+        <th>Date / Time</th>
       </tr>
       {% for item in data_points %}
         <tr align="center" height="40">
@@ -20,4 +36,5 @@
       {% endfor %}
     </tbody>
   </table>
+  <a style="text-align:left" href="{{ url_for('admin')}}">Back</a>
 </body>
