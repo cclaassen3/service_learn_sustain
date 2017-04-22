@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}" media="screen" />
+
+<body>
+  <table width="60%">
+    <tbody>
+      <tr>
+        <th>POI Location</th>
+        <th>Date / Time</th>
+        <th>Data Type</th>
+        <th>Data Value</th>
+      </tr>
+      {% for item in data_points %}
+        <tr align="center" height="40">
+          <td>{{ item[0] }}</td>
+          <td>{{ item[1] }}</td>
+          <td>{{ item[2] }}</td>
+          <td>{{ item[3] }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</body>

@@ -1,4 +1,5 @@
 from flask import render_template, json, request, Response
+from datetime import datetime
 import flask_login
 import MySQLdb
 import easygui
@@ -82,29 +83,40 @@ def add_new_poi_location():
     if permissions_enabled and not user: return flask.redirect('login')
     if permissions_enabled and user.user_type != 1: return flask.render_template('unauthorized.html')
     if flask.request.method == 'GET':
-        return flask.render_template('add_new_poi_location.html')
+        return flask.render_template('add_new_poi_location.html', cities=db.retrieveCities(), states=db.retrieveStates())
     elif flask.request.method == 'POST':
         locationName = request.form['location_name']
-        city = request.form['city']
-        state = request.form['state']
+        city = request.form['city'].replace('+', ' ')
+        state = request.form['state'].replace('+', ' ')
         zipCode = request.form['zip_code']
-        db.addNewPOILocation(locationName, city, state, zipCode)
-        return "new poi location added!"
+        if not locationName or not zipCode: return flask.render_template('add_new_poi_location.html', cities=db.retrieveCities(), states=db.retrieveStates(), error="Empty Fields not Allowed")
+        if not db.existsCityState(city, state): return flask.render_template('add_new_poi_location.html', cities=db.retrieveCities(), states=db.retrieveStates(), error="Invalid City State Combination")
+        success = db.addNewPOILocation(locationName, city, state, zipCode)
+        if not success: return flask.render_template('add_new_poi_location.html', cities=db.retrieveCities(), states=db.retrieveStates(), error="Failed to Add POI Location")
+        return flask.redirect('/cityScientist')
 
 @app.route('/add-new-data-point', methods=['GET', 'POST'])
 def add_new_data_point():
     if permissions_enabled and not user: return flask.redirect('login')
     if permissions_enabled and user.user_type != 1: return flask.render_template('unauthorized.html')
     if flask.request.method == 'GET':
-        return flask.render_template('add_new_data_point.html')
+        return flask.render_template('add_new_data_point.html', locations=db.retrievePOILocations(), data_types=db.retrieveDataTypes())
     elif flask.request.method == 'POST':
-        poiLocation = request.form['poi_location']
-        date = request.form['date']
-        dataType = request.form['data_type']
+        poiLocation = request.form['poi_location'].replace('+', ' ')
+        date_time = request.form['datetime'].replace('T', ' ')
+        dataType = request.form['data_type'].replace('+', ' ')
         value = request.form['value']
-        print "good before adding"
-        db.addNewDataPoint(poiLocation, date, dataType, value)
-        return "new data point added!"
+        if not date_time or not value: return flask.render_template('add_new_data_point.html', locations=db.retrievePOILocations(), data_types=db.retrieveDataTypes(), error="Empty Fields not Allowed")
+        if datetime.now() < datetime.strptime(str(date_time), '%Y-%m-%d %H:%M'): 
+            return flask.render_template('add_new_data_point.html', locations=db.retrievePOILocations(), data_types=db.retrieveDataTypes(), error="Date/Time Cannot be in the Future")
+        success = db.addNewDataPoint(poiLocation, date_time, dataType, value)
+        if not success: return flask.render_template('add_new_data_point.html', locations=db.retrievePOILocations(), data_types=db.retrieveDataTypes(), error="Failed to Add Data Point")
+        return flask.redirect('/cityScientist')
+
+@app.route('/manage-data-points')
+def manage_data_points():
+    data_points = db.retrieveDataPoints()
+    return render_template('manage_data_points.html', data_points=data_points)
 
 
 # -------------------- run app --------------------
