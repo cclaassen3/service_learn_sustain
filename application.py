@@ -78,6 +78,12 @@ def admin():
     if permissions_enabled and not user: return flask.redirect('login')
     return flask.render_template('admin.html')
 
+@app.route('/search-data-point', methods=['GET', 'POST'])
+def search_POI():
+    if permissions_enabled and not user: return flask.redirect('login')
+    if flask.request.method == 'GET':
+        return flask.render_template('search-data-point.html', locations=db.retrievePOILocations(), datatype = db.retrieveDataTypes())
+
 @app.route('/add-new-poi-location', methods=['GET', 'POST'])
 def add_new_poi_location():
     if permissions_enabled and not user: return flask.redirect('login')
