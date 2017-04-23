@@ -35,11 +35,10 @@
             <option value={{ state[0].replace(' ', '+') }}>{{ state[0] }}</option>
           {% endfor %}
         </select>
-      <br><br>
-      <input type="text" id="zip_code" name="zip_code" placeholder="Zip Code"/>
       <br><br><br>
-      <input type="checkbox" name="flagged" value="1"> Flagged </input> <br>
-      <br>
+      <label> Flagged? </label>
+      <input type="radio" name="flaggedy" value="1"> Yes </input> <br>
+      <br><br><br>
       <button>Submit</button>
       <p id = "feedback"  style="color: red">{{error}}</p>
       <p id= "results"> <table>
