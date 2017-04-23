@@ -93,7 +93,7 @@ def addNewDataPoint(poiLocation, date_time, dataType, value):
 def retrieveDataPoints():
 	#if filter selected, order by that filter
 	if data_point_filter: return filteredDataPoints(data_point_filter)
-	query = "SELECT poi_location_name, data_type, data_value, date_time FROM dataPoint WHERE accepted=False"
+	query = "SELECT poi_location_name, data_type, data_value, date_time FROM dataPoint WHERE accepted is NULL"
 	cursor.execute(query)
 	database.commit()
 	return cursor.fetchall()
@@ -102,7 +102,6 @@ def filteredDataPoints(filter_specs):
 	#set ascending / descending
 	ascdesc = 'asc'
 	if filter_specs[0] == 'desc': ascdesc = 'desc'
-	print "changed order"
 
 	#set column to filter by
 	column = 'poi_location_name'
@@ -111,10 +110,8 @@ def filteredDataPoints(filter_specs):
 		elif filter_specs[2] == 'value': column = 'data_value'
 	elif filter_specs[1] == 'date': column = 'date_time'
 
-	print "filter specs:", ascdesc, column
-
 	#retrieve data points
-	query = "SELECT poi_location_name, data_type, data_value, date_time FROM dataPoint WHERE accepted=False order by {} {}".format(column, ascdesc)
+	query = "SELECT poi_location_name, data_type, data_value, date_time FROM dataPoint WHERE accepted is NULL order by {} {}".format(column, ascdesc)
 	cursor.execute(query)
 	database.commit()
 	return cursor.fetchall()
@@ -148,6 +145,26 @@ def existsCityState(city, state):
 	cursor.execute(query, (city, state))
 	database.commit()
 	return len(cursor.fetchall()) > 0
+
+
+# ---------- modify data ----------
+
+def acceptDataPoint(poi_location, date_time):
+	try:
+		query = "UPDATE dataPoint SET accepted=True WHERE poi_location_name=%s and date_time=%s"
+		cursor.execute(query, (poi_location, date_time))
+		database.commit()
+	except:
+		print "error accepting {} {}".format(poi_location, date_time)
+
+def rejectDataPoint(poi_location, date_time):
+	try:
+		query = "UPDATE dataPoint SET accepted=0 WHERE poi_location_name=%s and date_time=%s"
+		cursor.execute(query, (poi_location, date_time))
+		database.commit()
+	except:
+		print "error accepting {} {}".format(poi_location, date_time)
+
 
 
 
