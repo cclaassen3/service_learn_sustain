@@ -81,31 +81,15 @@ def search_POI():
     if flask.request.method == 'GET':
         return flask.render_template('search-data-point.html', locations=db.retrievePOILocations(), datatype = db.retrieveDataTypes(), cities = db.retrieveCities(), states = db.retrieveStates(), data_points="")
     elif flask.request.method == 'POST':
-        if not request.form['poi_location']:
-            location = ''
+        location = request.form['poi_location'].replace('+', ' ')
+        city = request.form['city'].replace('+', ' ')
+        state = request.form['state'].replace('+', ' ')
+        if request.form['flaggedy'] == "1":
+            flagged = "1"
         else: 
-            location = request.form['poi_location'].replace('+', ' ')
-        if not request.form['city']:
-            city = ''
-        else: 
-            city = request.form['city'].replace('+', ' ')
-        if not request.form['state']: 
-            state = ''
-        else:
-            state = request.form['state'].replace('+', ' ')
-        if not request.form['flagged']:
-            flagged = ''
-        else: 
-            flagged = 1
-        if not request.form['datetime1']:
-            date1 = ''
-        else: 
-            date1 = request.form['datetime1']
-        if not request.form['datetime2']:
-                date2 = ''
-        else: 
-            date2 = request.form['datetime2']
-        flagged = str(flagged)
+            flagged = "0"
+        date1 = request.form['datetime1']
+        date2 = request.form['datetime2']
         #data_points = location + city + state + flagged + date1
         data_points = db.retrieveFilteredData(location, city, state, flagged, date1, date2)
         return render_template('search-data-point.html', locations=db.retrievePOILocations(), datatype = db.retrieveDataTypes(), cities = db.retrieveCities(), states = db.retrieveStates(), data_points= data_points)
