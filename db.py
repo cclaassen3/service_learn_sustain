@@ -39,20 +39,22 @@ def end():
 
 def login(username, password):
 
-	query = "SELECT * FROM user WHERE username = %s AND password = %s"
+	query = "SELECT * FROM user WHERE username=%s AND password=%s"
 	response = cursor.execute(query, (username, password))
-	if  not response:
-		return 0
+	if not response:
+		return None
 	else:
-		query = "SELECT usertype FROM user WHERE username = %s AND password = %s"
-		response = cursor.execute(query, (username, password))
+		query = "SELECT usertype FROM user WHERE username=%s AND password=%s"
+		cursor.execute(query, (username, password))
 		response = cursor.fetchone()
-		if response[0] == 'City Scientist':
-			return 1
+		if response[0] == 'Admin': return 'admin'
+		elif response[0] == 'City Scientist': return 'cityScientist'
 		elif response[0] == 'City Official':
-			return 2
-		elif response[0] == 'Admin':
-			return 3
+			#check to make sure city official account has been approved
+			query = "SELECT * FROM cityOfficial WHERE username=%s AND approved=True"
+			response = cursor.execute(query, (username,))
+			if not response: return 'unapprovedCO'
+			return 'cityOfficial'
 
 def register(username, email, password, usertype):
 	try:

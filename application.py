@@ -18,12 +18,6 @@ class User:
         self.username = username
         self.user_type = user_type
 
-'''
-  user_types:
-    1 --> City Scientist
-    2 --> City Official
-    3 --> Admin
-'''
 
 # -------------------- routes -------------------
 
@@ -43,12 +37,11 @@ def login():
         attemptedUser = flask.request.form['username']
         attemptedPass = flask.request.form['password']
         user_type = db.login(attemptedUser, attemptedPass)
+        if user_type == 'unapprovedCO': return flask.render_template('login.html', error="Account Not Yet Approved by Admin")
         if not user_type: return flask.render_template('login.html', error="Invalid Credentials")
         global user
         user = User(attemptedUser, user_type)
-        if user_type == 1: return flask.redirect('cityScientist')
-        elif user_type == 2: return flask.redirect('cityOfficial')
-        elif user_type == 3: return flask.redirect('admin')
+        return flask.redirect(user_type)
 
 @app.route('/register', methods=["POST", "GET"])
 def registration():
