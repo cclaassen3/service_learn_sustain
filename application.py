@@ -18,12 +18,6 @@ class User:
         self.username = username
         self.user_type = user_type
 
-'''
-  user_types:
-    1 --> City Scientist
-    2 --> City Official
-    3 --> Admin
-'''
 
 # -------------------- routes -------------------
 
@@ -43,12 +37,11 @@ def login():
         attemptedUser = flask.request.form['username']
         attemptedPass = flask.request.form['password']
         user_type = db.login(attemptedUser, attemptedPass)
+        if user_type == 'unapprovedCO': return flask.render_template('login.html', error="Account Not Yet Approved by Admin")
         if not user_type: return flask.render_template('login.html', error="Invalid Credentials")
         global user
         user = User(attemptedUser, user_type)
-        if user_type == 1: return flask.redirect('cityScientist')
-        elif user_type == 2: return flask.redirect('cityOfficial')
-        elif user_type == 3: return flask.redirect('admin')
+        return flask.redirect(user_type)
 
 @app.route('/register', methods=["POST", "GET"])
 def registration():
@@ -62,6 +55,10 @@ def registration():
         accepted = db.register(insertedUser, insertedEmail, insertedPass, insertedType)
         if not accepted: return flask.render_template('registration.html', error="Registration Failure")
         return flask.render_template('login.html')
+
+@app.route('/logout')
+def logout():
+    return flask.redirect('/login')
 
 @app.route('/cityScientist')
 def cityScientist():
@@ -175,6 +172,27 @@ def reject_data_points():
     for index in selected:
         db.rejectDataPoint(items[index][0], items[index][3])
     return flask.redirect('/manage-data-points')
+
+@app.route('/manage-city-officials')
+def manage_city_officials():
+    city_officials = db.retrieveCityOfficials()
+    return render_template('manage_city_officials.html', cityofficials=city_officials)
+
+@app.route('/accept-city-officials', methods=['POST'])
+def accept_city_officials():
+    items = db.retrieveCityOfficials()
+    selected = [int(x) for x in request.form.getlist("selected")]
+    for index in selected:
+        db.acceptCityOfficial(items[index][0])
+    return flask.redirect('/manage-city-officials')
+
+@app.route('/reject-city-officials', methods=['POST'])
+def reject_city_officials():
+    items = db.retrieveCityOfficials()
+    selected = [int(x) for x in request.form.getlist("selected")]
+    for index in selected:
+        db.rejectCityOfficial(items[index][0])
+    return flask.redirect('/manage-city-officials')
 
 
 
