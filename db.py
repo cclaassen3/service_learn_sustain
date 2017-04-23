@@ -87,7 +87,13 @@ def addNewDataPoint(poiLocation, date_time, dataType, value):
 		return False
 		
 
-
+def retrieveFilteredData(poiLocation, city, state, flagged, date_time1, date_time2):
+		query = "SELECT * FROM poi WHERE location_name=%s AND city =%s AND state=%s AND flag=%s AND date_flagged > %s AND date_flagged < %s"
+		response = cursor.execute(query, (poiLocation, city, state, flagged, date_time1, date_time2))
+		#response = cursor.execute(query)
+		#city, state, flagged, date_time1
+		database.commit()
+		return cursor.fetchall()
 # ---------- fetch data -----------
 
 def retrieveDataPoints():
@@ -142,6 +148,7 @@ def retrieveStates():
 	cursor.execute(query)
 	database.commit()
 	return cursor.fetchall()
+
 
 def existsCityState(city, state):
 	query = "SELECT * FROM cityState WHERE city=%s AND state=%s"
