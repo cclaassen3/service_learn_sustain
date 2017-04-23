@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}" media="screen" />
 
-<form class="change_data_point_filter" action="change-data-point-filter" method="POST">
+<form class="change_data_point_filter" action="change-data-point-filter"  method="POST">
   <br><header style="font-size:26px; font-weight:bold;">Manage Data Points</header><br>
   <label>Filter:</label>
     <select name="filter" onchange="this.form.submit()">
-      <option>Select One...</option>
+      <option>Select Filter...</option>
       <option value="asc_location_name">Location Name A-Z</option>
       <option value="desc_location_name">Location Name Z-A</option>
       <option value="asc_data_type">Data Type A-Z</option>
@@ -17,17 +17,20 @@
     </select>
 </form>
 <br><br>
-<body>
+
+<form class="accept_deny_data_points" method="POST">
   <table width="60%">
     <tbody>
       <tr>
+        <th>Select</th>
         <th>POI Location</th>
         <th>Data Type</th>
         <th>Data Value</th>
         <th>Date / Time</th>
       </tr>
-      {% for item in data_points %}
+      {% for item in datapoints %}
         <tr align="center" height="40">
+          <td><input type="checkbox" id="{{ datapoints.index(item) }}" name="selected" value="{{ datapoints.index(item) }}" ></td>
           <td>{{ item[0] }}</td>
           <td>{{ item[1] }}</td>
           <td>{{ item[2] }}</td>
@@ -36,5 +39,9 @@
       {% endfor %}
     </tbody>
   </table>
+  <br>
+  <button type="submit" formaction="accept-data-points" style="margin-left:50px">Accept</button>
+  <button type="submit" formaction="reject-data-points">Reject</button>
+  </form>
+  <br>
   <a style="text-align:left" href="{{ url_for('admin')}}">Back</a>
-</body>
