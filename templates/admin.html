@@ -1,13 +1,12 @@
 <!DOCTYPE html>
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}" media="screen" />
 
-
 <div class="form" style="margin-top:100px">
     <h2> <b> Welcome, Admin!</b> </h2>
     <br>
     <a href="{{ url_for('manage_data_points')}}">Pending Data Points</a>
     <br><br>
-    <a href="{{ url_for('index')}}">Pending City Official Accounts</a>
+    <a href="{{ url_for('manage_city_officials')}}">Pending City Official Accounts</a>
 </div>
 
 
