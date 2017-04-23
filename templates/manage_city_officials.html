@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}" media="screen" />
+
+<br><header style="font-size:26px; font-weight:bold; margin-left=20px">Data Points</header><br>
+
+<form class="accept_deny_city_officials" method="POST">
+  <table width="60%">
+    <tbody>
+      <tr>
+        <th>Select</th>
+        <th>Username</th>
+        <th>Email</th>
+        <th>City</th>
+        <th>State</th>
+        <th>Title</th>
+      </tr>
+      {% for item in cityofficials %}
+        <tr align="center" height="40">
+          <td><input type="checkbox" id="{{ cityofficials.index(item) }}" name="selected" value="{{ cityofficials.index(item) }}" ></td>
+          <td>{{ item[0] }}</td>
+          <td>{{ item[1] }}</td>
+          <td>{{ item[2] }}</td>
+          <td>{{ item[3] }}</td>
+          <td>{{ item[4] }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <br>
+  <button type="submit" formaction="accept-city-officials" style="margin-left:50px">Accept</button>
+  <button type="submit" formaction="reject-city-officials">Reject</button>
+  </form>
+  <br>
+  <a style="text-align:left" href="{{ url_for('admin')}}">Back</a>

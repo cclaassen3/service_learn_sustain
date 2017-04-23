@@ -94,10 +94,11 @@ def retrieveFilteredData(poiLocation, city, state, flagged, date_time1, date_tim
 		#city, state, flagged, date_time1
 		database.commit()
 		return cursor.fetchall()
+
+
 # ---------- fetch data -----------
 
 def retrieveDataPoints():
-	#if filter selected, order by that filter
 	if data_point_filter: return filteredDataPoints(data_point_filter)
 	query = "SELECT poi_location_name, data_type, data_value, date_time FROM dataPoint WHERE accepted is NULL"
 	cursor.execute(query)
@@ -118,6 +119,12 @@ def filteredDataPoints(filter_specs):
 
 	#retrieve data points
 	query = "SELECT poi_location_name, data_type, data_value, date_time FROM dataPoint WHERE accepted is NULL order by {} {}".format(column, ascdesc)
+	cursor.execute(query)
+	database.commit()
+	return cursor.fetchall()
+
+def retrieveCityOfficials():
+	query = "SELECT username, email, City, State, title FROM cityOfficial NATURAL JOIN user WHERE approved is NULL"
 	cursor.execute(query)
 	database.commit()
 	return cursor.fetchall()
@@ -146,7 +153,6 @@ def retrieveStates():
 	database.commit()
 	return cursor.fetchall()
 
-
 def existsCityState(city, state):
 	query = "SELECT * FROM cityState WHERE city=%s AND state=%s"
 	cursor.execute(query, (city, state))
@@ -162,7 +168,7 @@ def acceptDataPoint(poi_location, date_time):
 		cursor.execute(query, (poi_location, date_time))
 		database.commit()
 	except:
-		print "error accepting {} {}".format(poi_location, date_time)
+		print "error accepting data point: {} {}".format(poi_location, date_time)
 
 def rejectDataPoint(poi_location, date_time):
 	try:
@@ -170,7 +176,23 @@ def rejectDataPoint(poi_location, date_time):
 		cursor.execute(query, (poi_location, date_time))
 		database.commit()
 	except:
-		print "error accepting {} {}".format(poi_location, date_time)
+		print "error rejecting data point: {} {}".format(poi_location, date_time)
+
+def acceptCityOfficial(username):
+	try:
+		query = "UPDATE cityOfficial SET approved=True WHERE username=%s"
+		cursor.execute(query, (username,))
+		database.commit()
+	except:
+		print "error accepting city official: {}".format(username)
+
+def rejectCityOfficial(username):
+	try:
+		query = "UPDATE cityOfficial SET approved=False WHERE username=%s"
+		cursor.execute(query, (username,))
+		database.commit()
+	except:
+		print "error rejecting city official: {}".format(username)
 
 
 

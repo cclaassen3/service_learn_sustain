@@ -159,6 +159,27 @@ def reject_data_points():
         db.rejectDataPoint(items[index][0], items[index][3])
     return flask.redirect('/manage-data-points')
 
+@app.route('/manage-city-officials')
+def manage_city_officials():
+    city_officials = db.retrieveCityOfficials()
+    return render_template('manage_city_officials.html', cityofficials=city_officials)
+
+@app.route('/accept-city-officials', methods=['POST'])
+def accept_city_officials():
+    items = db.retrieveCityOfficials()
+    selected = [int(x) for x in request.form.getlist("selected")]
+    for index in selected:
+        db.acceptCityOfficial(items[index][0])
+    return flask.redirect('/manage-city-officials')
+
+@app.route('/reject-city-officials', methods=['POST'])
+def reject_city_officials():
+    items = db.retrieveCityOfficials()
+    selected = [int(x) for x in request.form.getlist("selected")]
+    for index in selected:
+        db.rejectCityOfficial(items[index][0])
+    return flask.redirect('/manage-city-officials')
+
 
 
 # -------------------- run app --------------------
