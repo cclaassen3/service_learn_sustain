@@ -88,8 +88,36 @@ def addNewDataPoint(poiLocation, date_time, dataType, value):
 		
 
 def retrieveFilteredData(poiLocation, city, state, flagged, date_time1, date_time2):
-		query = "SELECT * FROM poi WHERE location_name=%s AND city =%s AND state=%s AND flag=%s AND date_flagged > %s AND date_flagged < %s"
-		response = cursor.execute(query, (poiLocation, city, state, flagged, date_time1, date_time2))
+		if poiLocation != '' and city != '' and state != '' and flagged == '1' and date_time1 != '' and date_time2 != '':
+			query = "SELECT * FROM poi WHERE location_name=%s AND city =%s AND state=%s AND flag=%s AND date_flagged > %s AND date_flagged < %s"
+			response = cursor.execute(query, (poiLocation, city, state, flagged, date_time1, date_time2))
+		elif poiLocation == '' and city != '' and state != '' and flagged == '1' and date_time1 != '' and date_time2 != '':
+			query = "SELECT * FROM poi WHERE city =%s AND state=%s AND flag=%s AND date_flagged > %s AND date_flagged < %s"
+			response = cursor.execute(query, (city, state, flagged, date_time1, date_time2))
+		elif poiLocation == '' and city == '' and state != '' and flagged == '1' and date_time1 != '' and date_time2 != '':	
+			query = "SELECT * FROM poi WHERE state=%s AND flag=%s AND date_flagged > %s AND date_flagged < %s"
+			response = cursor.execute(query, (state, flagged, date_time1, date_time2))
+		elif poiLocation == '' and city == '' and state == '' and flagged == '1' and date_time1 != '' and date_time2 != '':	
+			query = "SELECT * FROM poi WHERE flag=%s AND date_flagged > %s AND date_flagged < %s"
+			response = cursor.execute(query, (flagged, date_time1, date_time2))
+		elif poiLocation == '' and city == '' and state == '' and flagged == '' and date_time1 != '' and date_time2 != '':
+			query = "SELECT * FROM poi WHERE date_flagged > %s AND date_flagged < %s"
+			response = cursor.execute(query, (date_time1, date_time2))
+		elif poiLocation == '' and city != '' and state != '' and flagged == '1' and date_time1 == '' and date_time2 == '':
+			query = "SELECT * FROM poi WHERE city=%s AND state=%s AND flag=%s"
+			response = cursor.execute(query, (city, state, flagged))
+		elif poiLocation == '' and city != '' and state != '' and flagged == '0' and date_time1 == '' and date_time2 == '':
+			query = "SELECT * FROM poi WHERE state=%s"
+			response = cursor.execute(query, (state))
+		elif poiLocation != '' and city == '' and state == '' and flagged == '0' and date_time1 == '' and date_time2 == '':
+			query = "SELECT * FROM poi WHERE location_name=%s and flag=%s"
+			response = cursor.execute(query, (poiLocation))
+		elif poiLocation != '' and city != '' and state != '' and flagged == '1' and date_time1 == '' and date_time2 == '':
+			query = "SELECT * FROM poi WHERE location_name=%s and city=%s and state=%s and flag = %s"
+			response = cursor.execute(query, (poiLocation, city, state, flagged))
+		else:
+			query = "SELECT * FROM poi"
+			response = cursor.execute(query)
 		#response = cursor.execute(query)
 		#city, state, flagged, date_time1
 		database.commit()

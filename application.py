@@ -84,16 +84,33 @@ def search_POI():
     if flask.request.method == 'GET':
         return flask.render_template('search-data-point.html', locations=db.retrievePOILocations(), datatype = db.retrieveDataTypes(), cities = db.retrieveCities(), states = db.retrieveStates(), data_points="")
     elif flask.request.method == 'POST':
-        location = request.form['poi_location'].replace('+', ' ')
-        city = request.form['city'].replace('+', ' ')
-        state = request.form['state'].replace('+', ' ')
-        flagged = request.form['flagged']
-        date1 = request.form['datetime1']
-        date2 = request.form['datetime2']
+        if not request.form['poi_location']:
+            location = ''
+        else: 
+            location = request.form['poi_location'].replace('+', ' ')
+        if not request.form['city']:
+            city = ''
+        else: 
+            city = request.form['city'].replace('+', ' ')
+        if not request.form['state']: 
+            state = ''
+        else:
+            state = request.form['state'].replace('+', ' ')
+        if not request.form['flagged']:
+            flagged = ''
+        else: 
+            flagged = 1
+        if not request.form['datetime1']:
+            date1 = ''
+        else: 
+            date1 = request.form['datetime1']
+        if not request.form['datetime2']:
+                date2 = ''
+        else: 
+            date2 = request.form['datetime2']
         flagged = str(flagged)
         #data_points = location + city + state + flagged + date1
         data_points = db.retrieveFilteredData(location, city, state, flagged, date1, date2)
-        datapnts = []
         return render_template('search-data-point.html', locations=db.retrievePOILocations(), datatype = db.retrieveDataTypes(), cities = db.retrieveCities(), states = db.retrieveStates(), data_points= data_points)
         #if not db.existsCityState(city, state): return flask.render_template('add_new_poi_location.html', cities=db.retrieveCities(), states=db.retrieveStates(), error="Invalid City State Combination")
 
