@@ -56,6 +56,10 @@ def registration():
         if not accepted: return flask.render_template('registration.html', error="Registration Failure")
         return flask.render_template('login.html')
 
+@app.route('/logout')
+def logout():
+    return flask.redirect('/login')
+
 @app.route('/cityScientist')
 def cityScientist():
     if permissions_enabled and not user: return flask.redirect('login')
