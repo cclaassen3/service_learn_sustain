@@ -132,7 +132,6 @@ def retrieveDataPoints():
 	if data_point_filter: return filteredDataPoints(data_point_filter)
 	query = "SELECT poi_location_name, data_type, data_value, date_time FROM dataPoint WHERE accepted is NULL"
 	cursor.execute(query)
-	database.commit()
 	return cursor.fetchall()
 
 def filteredDataPoints(filter_specs):
@@ -150,44 +149,43 @@ def filteredDataPoints(filter_specs):
 	#retrieve data points
 	query = "SELECT poi_location_name, data_type, data_value, date_time FROM dataPoint WHERE accepted is NULL order by {} {}".format(column, ascdesc)
 	cursor.execute(query)
-	database.commit()
 	return cursor.fetchall()
 
 def retrieveCityOfficials():
 	query = "SELECT username, email, City, State, title FROM cityOfficial NATURAL JOIN user WHERE approved is NULL"
 	cursor.execute(query)
-	database.commit()
 	return cursor.fetchall()
 
 def retrievePOILocations():
 	query = "SELECT location_name FROM poi"
 	cursor.execute(query)
-	database.commit()
 	return cursor.fetchall()
 
 def retrieveDataTypes():
 	query = "SELECT * FROM dataType"
 	cursor.execute(query)
-	database.commit()
 	return cursor.fetchall()
 
 def retrieveCities():
 	query = "SELECT city FROM cityState"
 	cursor.execute(query)
-	database.commit()
 	return cursor.fetchall()
 
 def retrieveStates():
 	query = "SELECT state FROM cityState"
 	cursor.execute(query)
-	database.commit()
 	return cursor.fetchall()
 
 def existsCityState(city, state):
 	query = "SELECT * FROM cityState WHERE city=%s AND state=%s"
 	cursor.execute(query, (city, state))
-	database.commit()
 	return len(cursor.fetchall()) > 0
+
+def retrievePOIReportRows():
+	query = "SELECT dp1.poi_location_name , poi.City, poi.State, MIN(dp2.data_value) AS Mold_Min, AVG(dp2.data_value) AS Mold_Avg, MAX(dp2.data_value) AS Mold_Max, MIN(dp3.data_value) AS AQ_Min, AVG(dp3.data_value) AS AQ_Avg, MAX(dp3.data_value) AS AQ_Max, sum(dp1.poi_location_name) AS num_of_data_points, poi.flag FROM dataPoint dp1, dataPoint dp2, dataPoint dp3, poi WHERE dp1.poi_location_name =dp2.poi_location_name AND dp2.poi_location_name=dp3.poi_location_name AND dp2.data_type='Mold' AND dp3.data_type='Air Quality' AND dp1.poi_location_name = poi.location_name GROUP BY poi_location_name"
+	cursor.execute(query)
+	return cursor.fetchall()
+
 
 
 # ---------- modify data ----------
@@ -223,6 +221,7 @@ def rejectCityOfficial(username):
 		database.commit()
 	except:
 		print "error rejecting city official: {}".format(username)
+
 
 
 

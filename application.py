@@ -111,7 +111,6 @@ def search_POI():
         return render_template('search-data-point.html', locations=db.retrievePOILocations(), datatype = db.retrieveDataTypes(), cities = db.retrieveCities(), states = db.retrieveStates(), data_points= data_points)
         #if not db.existsCityState(city, state): return flask.render_template('add_new_poi_location.html', cities=db.retrieveCities(), states=db.retrieveStates(), error="Invalid City State Combination")
 
-
 @app.route('/add-new-poi-location', methods=['GET', 'POST'])
 def add_new_poi_location():
     if permissions_enabled and not user: return flask.redirect('login')
@@ -193,6 +192,10 @@ def reject_city_officials():
     for index in selected:
         db.rejectCityOfficial(items[index][0])
     return flask.redirect('/manage-city-officials')
+
+@app.route('/poi-report')
+def poi_report():
+    return flask.render_template('poi_report.html', rows=db.retrievePOIReportRows())
 
 
 

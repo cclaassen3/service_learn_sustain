@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}" media="screen" />
+
+<form class="change_data_point_filter" action="change-poi-report-filter"  method="POST">
+  <br><header style="font-size:26px; font-weight:bold;">POI Report</header><br>
+  <label>Filter:</label>
+    <select name="filter" onchange="this.form.submit()">
+      <option>Select Filter...</option>
+      <option value="asc_mold_min">Mold Min Low-High</option>
+      <option value="desc_mold_min">Mold Min High-Low</option>
+      <option value="asc_mold_avg">Mold Avg Low-High</option>
+      <option value="desc_mold_avg">Mold Avg High-Low</option>
+      <option value="asc_mold_max">Mold Max Low-High</option>
+      <option value="desc_mold_max">Mold Max High-Low</option>
+      <option value="asc_AQ_min">AQ Min Low-High</option>
+      <option value="desc_AQ_min">QA Min High-Low</option>
+      <option value="asc_AQ_avg">AQ Avg Low-High</option>
+      <option value="desc_AQ_avg">AQ Avg High-Low</option>
+      <option value="asc_AQ_max">AQ Max Low-High</option>
+      <option value="desc_AQ_max">AQ Max High-Low</option>
+      <option value="asc_num_data_points"># Data Points Low-High</option>
+      <option value="desc_num_data_points"># Data Points High-Low</option>
+      <option value="desc_flagged">Flagged First</option>
+      <option value="asc_flagged">Flagged Last</option>
+    </select>
+</form>
+<br><br>
+
+<body>
+  <table width="95%">
+    <tbody>
+      <tr>
+        <th>POI Location</th>
+        <th>City</th>
+        <th>State</th>
+        <th>Mold Min</th>
+        <th>Mold Avg</th>
+        <th>Mold Max</th>
+        <th>AQ Min</th>
+        <th>AQ Avg</th>
+        <th>AQ Max</th>
+        <th># Data Points</th>
+        <th>Flagged?</th>
+      </tr>
+      {% for item in rows %}
+        <tr align="center" height="40">
+          <td>{{ item[0] }}</td>
+          <td>{{ item[1] }}</td>
+          <td>{{ item[2] }}</td>
+          <td>{{ item[3] }}</td>
+          <td>{{ item[4] }}</td>
+          <td>{{ item[5] }}</td>
+          <td>{{ item[6] }}</td>
+          <td>{{ item[7] }}</td>
+          <td>{{ item[8] }}</td>
+          <td>{{ item[9] }}</td>
+          <td>{{ item[10] }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  </body>
+  <br><br>
+  <a style="text-align:left" href="{{ url_for('cityOfficial')}}">Back</a>
