@@ -111,7 +111,7 @@ def logout():
 
 @app.route('/cityScientist')
 def cityScientist():
-    if permissions_enabled and not user and not : return flask.redirect('login')
+    if permissions_enabled and not user: return flask.redirect('login')
     return flask.render_template('cityscientist.html')
 
 @app.route('/cityOfficial')
@@ -125,12 +125,12 @@ def admin():
     return flask.render_template('admin.html')
 
 @app.route('/search-data-point', methods=['GET', 'POST'])
-def search_POI():
+def search_data_points():
 
     if permissions_enabled and not user: return flask.redirect('login')
 
     if flask.request.method == 'GET':
-        return flask.render_template('search-data-point.html', locations=db.retrievePOILocations(), datatype = db.retrieveDataTypes(), cities = db.retrieveCities(), states = db.retrieveStates(), data_points=db.retrieveDataPoints())
+        return flask.render_template('search-data-point.html', locations=db.retrievePOILocations(), datatype = db.retrieveDataTypes(), cities = db.retrieveCities(), states = db.retrieveStates(), data_points="")
 
     elif flask.request.method == 'POST':
         location = request.form['poi_location'].replace('+', ' ')
@@ -144,9 +144,9 @@ def search_POI():
             flagged = True
 
         dictionary = {}
-        if location and location != "None": dictionary['location_name'] = str(location)
-        if city and city != "None": dictionary['City'] = str(city)
-        if state and state != "None": dictionary['State'] = str(state)
+        if location: dictionary['location_name'] = str(location)
+        if city: dictionary['City'] = str(city)
+        if state: dictionary['State'] = str(state)
         if zipcode: dictionary['zip_code'] = str(zipcode)
         if date1: dictionary['min_date'] = str(date1)
         if date2: dictionary['max_date'] = str(date2)
