@@ -97,6 +97,21 @@ def retrieveFilteredData(poiLocation, city, state, flagged, date_time1, date_tim
 			query = "SELECT * FROM poi where location_name=%s and city=%s and state=%s and flag=%s"
 			response = cursor.execute(query, (poiLocation, city, state, flagged))
 
+		database.commit()
+		return cursor.fetchall()
+
+
+def retrieveDataForLocation(poiLocation): 
+	query = "SELECT data_type, data_value, date_time FROM dataPoint WHERE poi_location_name = %s"
+	cursor.execute(query, (poiLocation,))
+	database.commit()
+	return cursor.fetchall()
+
+def retrieveDataForPOIDetails(poiLocation, datetime1, datetime2, datapoint1, datapoint2, datatype): 
+	query = "SELECT data_type, data_value, date_time FROM dataPoint WHERE poi_location_name = %s AND date_time >= %s AND date_time <= %s AND data_value >= %s AND data_value <= %s AND data_type = %s"
+	cursor.execute(query, (poiLocation, datetime1, datetime2, datapoint1, datapoint2, datatype))
+	database.commit()
+	return cursor.fetchall()
 
 		# if poiLocation != '' and city != '' and state != '' and flagged == '1' and date_time1 != '' and date_time2 != '':
 		# 	query = "SELECT * FROM poi WHERE location_name=%s AND city =%s AND state=%s AND flag=%s AND date_flagged > %s AND date_flagged < %s"
@@ -130,9 +145,6 @@ def retrieveFilteredData(poiLocation, city, state, flagged, date_time1, date_tim
 		# 	response = cursor.execute(query)
 		#response = cursor.execute(query)
 		#city, state, flagged, date_time1
-		database.commit()
-		return cursor.fetchall()
-
 
 # ---------- fetch data -----------
 

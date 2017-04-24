@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}" media="screen" />
+<div class="form" style="margin-top:100px">
+<header style="font-size:26px; font-weight:bold;">POI Details</header>
+    <br><br>
+    <form class="new-search-form" action="poi-details" method="POST">
+      <label>Data Type</label>
+        <select name="poi_type">
+          {% for type in types %}
+            <option value={{ type[0].replace(' ', '+') }}>{{ type[0] }}</option>
+          {% endfor %}
+        </select>
+      <br>
+      <label>Data Value Range </label>
+        <input type="text" name="rangestart"></input>
+        <input type="text" name="rangeend"></input><br><br>
+      <label>Date/Time Range </label>
+        <input type="date" name="datetime1"></input><br><br>
+        <input type="date" name="datetime2"></input><br><br>
+      <br><br>
+      <button id = "apply">Apply Filters</button>
+<table> 
+	<tr>
+          <th>Data Type</th>
+          <th>Data Value</th>
+          <th>Time and Date of Reading</th>
+      </tr> 
+        {%for data in data_points%}
+        <tr> 
+            <td>{{data[0]}}</td>
+            <td>{{data[1]}}</td>
+            <td>{{data[2]}}</td>
+        </tr>
+        {% endfor %}
+</table>
+</div>
