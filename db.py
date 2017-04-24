@@ -10,6 +10,7 @@ cursor = None
 data_point_filter = None
 poi_report_filter = None
 
+
 # ---------- database connection functions ----------
 
 def setUp():
@@ -67,17 +68,8 @@ def register(username, email, password, usertype):
 	except:
 		return False
 
-def addCityOfficial(username, city, state, title):
-	try:
-		query = "INSERT INTO cityOfficial(username, city, state, title) VALUES(%s, %s, %s, %s)"
-		response = cursor.execute(query, (username, city, state, title))
-		database.commit()
-		return True
-	except:
-		print "Error adding city official to the DB"
 
-
-# ---------- adding new data ----------
+# ---------- data insertion ----------
 
 def addNewPOILocation(locationName, city, state, zipCode):
 	try:
@@ -98,13 +90,15 @@ def addNewDataPoint(poiLocation, date_time, dataType, value):
 		return True
 	except:
 		return False
-		
 
-def retrieveFilteredData(poiLocation, city, state, flagged, date_time1, date_time2):
-		query = "SELECT * FROM poi WHERE location_name=%s AND city =%s AND state=%s AND flag=%s AND date_flagged > %s AND date_flagged < %s"
-		response = cursor.execute(query, (poiLocation, city, state, flagged, date_time1, date_time2))
+def addCityOfficial(username, city, state, title):
+	try:
+		query = "INSERT INTO cityOfficial(username, city, state, title) VALUES(%s, %s, %s, %s)"
+		response = cursor.execute(query, (username, city, state, title))
 		database.commit()
-		return cursor.fetchall()
+		return True
+	except:
+		print "Error adding city official to the DB"
 
 def flagPOI(poiLocation):
 	query = "UPDATE POI SET flag = 1, date_flagged=sysdate WHERE location_name = %s"
@@ -112,6 +106,24 @@ def flagPOI(poiLocation):
 	database.commit()
 	return cursor.fetchall()
 
+
+# ---------- data retrieval ----------
+	
+def retrieveFilteredDataPoints(dictionary):
+		#query = "SELECT * FROM poi WHERE location_name=%s AND city =%s AND state=%s AND flag=%s AND date_flagged > %s AND date_flagged < %s"
+		query = "SELECT * FROM poi"
+		# if dictionary:
+		# 	query += " WHERE "
+		# 	if "location_name" in dictionary.keys():
+		# 		query += "location_name={}".format(dictionary["location_name"])
+		# 	if "City" in dictionary.keys():
+		# 		query += "City={}".format(dictionary["City"])
+		# 	if "State" in dictionary.keys():
+		# 		query += "State={}".format(dictionary["State"])
+
+		cursor.execute(query)
+		database.commit()
+		return cursor.fetchall()
 
 def retrieveDataForLocation(poiLocation): 
 	query = "SELECT data_type, data_value, date_time FROM dataPoint WHERE poi_location_name = %s"
@@ -195,7 +207,6 @@ def retrievePOIReportRows():
 	return cursor.fetchall()
 
 def filteredPOIReportRows(filter_specs):
-
 	query = "SELECT dp1.poi_location_name, poi.City, poi.State, MIN( dp2.data_value ) AS Mold_Min, AVG( dp2.data_value ) AS Mold_Avg, MAX( dp2.data_value ) AS Mold_Max, MIN( dp3.data_value ) AS AQ_Min, AVG( dp3.data_value ) AS AQ_Avg, MAX( dp3.data_value ) AS AQ_Max, COUNT( DISTINCT ( dp1.date_time ) ) AS num_of_data_points, poi.flag FROM dataPoint dp1 LEFT JOIN dataPoint dp2 ON dp1.poi_location_name = dp2.poi_location_name AND dp2.data_type = 'Mold' LEFT JOIN dataPoint dp3 ON dp1.poi_location_name = dp3.poi_location_name AND dp3.data_type = 'Air Quality' LEFT JOIN poi ON dp1.poi_location_name = poi.location_name GROUP BY poi_location_name"
 
 	#set ascending / descending
@@ -230,8 +241,7 @@ def filteredPOIReportRows(filter_specs):
 	return cursor.fetchall()
 
 
-
-# ---------- modify data ----------
+# ---------- data modification ----------
 
 def acceptDataPoint(poi_location, date_time):
 	try:

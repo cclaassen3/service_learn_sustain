@@ -70,7 +70,6 @@ def registration():
             if not city or not state or not title: return flask.render_template('registration.html', cities=db.retrieveCities(), states=db.retrieveStates(), error="Please fill out all City Official Fields")
             if not db.existsCityState(city, state): return flask.render_template('registration.html', cities=db.retrieveCities(), states=db.retrieveStates(), error="Invalid City State Combination")
 
-
         #add to DB
         accepted = db.register(insertedUser, insertedEmail, insertedPass, insertedType)
         if accepted and insertedType == 'City Official': db.addCityOfficial(insertedUser, city, state, title)
@@ -99,11 +98,11 @@ def poiDetails():
         print data
         return flask.render_template('poi-details.html', poilocation = poiLocation, data_points = data, types = db.retrieveDataTypes())
 
+
 @app.route('/flagged')
 def flagged():
     response = db.flagPOI(poiLocationName)
     return flask.render_template('flagged.html')
-
 
 @app.route('/logout')
 def logout():
@@ -125,25 +124,37 @@ def admin():
     return flask.render_template('admin.html')
 
 @app.route('/search-data-point', methods=['GET', 'POST'])
-def search_POI():
-    global poiLocation
+def search_data_points():
+
     if permissions_enabled and not user: return flask.redirect('login')
+
     if flask.request.method == 'GET':
         return flask.render_template('search-data-point.html', locations=db.retrievePOILocations(), datatype = db.retrieveDataTypes(), cities = db.retrieveCities(), states = db.retrieveStates(), data_points="")
+
     elif flask.request.method == 'POST':
         location = request.form['poi_location'].replace('+', ' ')
-        poiLocation = location
-        print poiLocation
         city = request.form['city'].replace('+', ' ')
         state = request.form['state'].replace('+', ' ')
-        if request.form['flaggedy'] == "1":
-            flagged = "1"
-        else: 
-            flagged = "0"
+        zipcode = request.form['zip_code']
         date1 = request.form['datetime1']
         date2 = request.form['datetime2']
-        #data_points = location + city + state + flagged + date1
-        data_points = db.retrieveFilteredData(location, city, state, flagged, date1, date2)
+        flagged = False
+        if request.form['flagged'] == "flagged_only":
+            flagged = True
+
+        dictionary = {}
+        if location: dictionary['location_name'] = location
+        if city: dictionary['City'] = city
+        if state: dictionary['State'] = state
+        if zipcode: dictionary['zip_code'] = zipcode
+        if date1: dictionary['min_date'] = date1
+        if date2: dictionary['max_date'] = date2
+        if flagged: dictionary['flagged'] = flagged
+
+        data_points = db.retrieveFilteredDataPoints(dictionary)
+
+        global poiLocation
+        poiLocation = location
         return render_template('search-data-point.html', locations=db.retrievePOILocations(), datatype = db.retrieveDataTypes(), cities = db.retrieveCities(), states = db.retrieveStates(), data_points= data_points)
         #if not db.existsCityState(city, state): return flask.render_template('add_new_poi_location.html', cities=db.retrieveCities(), states=db.retrieveStates(), error="Invalid City State Combination")
 
