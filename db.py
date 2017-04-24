@@ -51,6 +51,7 @@ def login(username, password):
 		if response[0] == 'Admin': return 'admin'
 		elif response[0] == 'City Scientist': return 'cityScientist'
 		elif response[0] == 'City Official':
+
 			#check to make sure city official account has been approved
 			query = "SELECT * FROM cityOfficial WHERE username=%s AND approved=True"
 			response = cursor.execute(query, (username,))
@@ -90,7 +91,7 @@ def addNewPOILocation(locationName, city, state, zipCode):
 
 def addNewDataPoint(poiLocation, date_time, dataType, value):
 	try:
-		query = "INSERT into dataPoint(poi_location_name, date_time, data_type, data_value, accepted) VALUES(%s, %s, %s, %s, 0)"
+		query = "INSERT into dataPoint(poi_location_name, date_time, data_type, data_value, accepted) VALUES(%s, %s, %s, %s, NULL)"
 		response = cursor.execute(query, (poiLocation, date_time, dataType, value))
 		print "response:", response
 		database.commit()
@@ -203,54 +204,42 @@ def existsCityState(city, state):
 
 def retrievePOIReportRows():
 	if poi_report_filter: return filteredPOIReportRows(poi_report_filter)
-	query = "SELECT dp1.poi_location_name, poi.City, poi.State, MIN( dp2.data_value ) AS Mold_Min, AVG( dp2.data_value ) AS Mold_Avg, MAX( dp2.data_value ) AS Mold_Max, MIN( dp3.data_value ) AS AQ_Min, AVG( dp3.data_value ) AS AQ_Avg, MAX( dp3.data_value ) AS AQ_Max, SUM( dp1.poi_location_name ) AS num_of_data_points, poi.flag FROM dataPoint dp1 LEFT JOIN dataPoint dp2 ON dp1.poi_location_name = dp2.poi_location_name AND dp2.data_type =  'Mold' LEFT JOIN dataPoint dp3 ON dp1.poi_location_name = dp3.poi_location_name LEFT JOIN poi ON dp1.poi_location_name = poi.location_name AND dp3.data_type =  'Air Quality' GROUP BY poi_location_name"
+	query = "SELECT dp1.poi_location_name, poi.City, poi.State, MIN( dp2.data_value ) AS Mold_Min, AVG( dp2.data_value ) AS Mold_Avg, MAX( dp2.data_value ) AS Mold_Max, MIN( dp3.data_value ) AS AQ_Min, AVG( dp3.data_value ) AS AQ_Avg, MAX( dp3.data_value ) AS AQ_Max, COUNT( DISTINCT ( dp1.date_time ) ) AS num_of_data_points, poi.flag FROM dataPoint dp1 LEFT JOIN dataPoint dp2 ON dp1.poi_location_name = dp2.poi_location_name AND dp2.data_type = 'Mold' LEFT JOIN dataPoint dp3 ON dp1.poi_location_name = dp3.poi_location_name AND dp3.data_type = 'Air Quality' LEFT JOIN poi ON dp1.poi_location_name = poi.location_name GROUP BY poi_location_name"
 	cursor.execute(query)
 	return cursor.fetchall()
 
-def filteredPOIReportRows(poi_report_filter):
+def filteredPOIReportRows(filter_specs):
 
-	add_to_query = None
+	query = "SELECT dp1.poi_location_name, poi.City, poi.State, MIN( dp2.data_value ) AS Mold_Min, AVG( dp2.data_value ) AS Mold_Avg, MAX( dp2.data_value ) AS Mold_Max, MIN( dp3.data_value ) AS AQ_Min, AVG( dp3.data_value ) AS AQ_Avg, MAX( dp3.data_value ) AS AQ_Max, COUNT( DISTINCT ( dp1.date_time ) ) AS num_of_data_points, poi.flag FROM dataPoint dp1 LEFT JOIN dataPoint dp2 ON dp1.poi_location_name = dp2.poi_location_name AND dp2.data_type = 'Mold' LEFT JOIN dataPoint dp3 ON dp1.poi_location_name = dp3.poi_location_name AND dp3.data_type = 'Air Quality' LEFT JOIN poi ON dp1.poi_location_name = poi.location_name GROUP BY poi_location_name"
 
 	#set ascending / descending
 	ascdesc = 'asc'
 	if filter_specs[0] == 'desc': ascdesc = 'desc'
 
-	#set column to filter by
-	column = 'flagged'
-	column_value = None
-	stat_func = None
+	#determine what column / statistic to filter by
 	if filter_specs[1] == 'mold':
-		column = 'data_type'
-		column_value = 'Mold'
-		if filter_specs[2] == 'min': stat_func = 'min'
-		elif filter_specs[2] == 'avg': stat_func = 'avg'
-		else: stat_func = 'max'
+		if filter_specs[2] == 'min': 
+			query += " ORDER BY Mold_Min {}".format(ascdesc)
+		elif filter_specs[2] == 'avg': 
+			query += " ORDER BY Mold_Avg {}".format(ascdesc)
+		else: 
+			query += " ORDER BY Mold_Max {}".format(ascdesc)
 
 	elif filter_specs[1] == 'AQ': 
-		column = 'data_type'
-		column = 'Air Quality'
-		if filter_specs[2] == 'min': stat_func = 'min'
-		elif filter_specs[2] == 'avg': stat_func = 'avg'
-		else: stat_func = 'max'
+		if filter_specs[2] == 'min': 
+			query += " ORDER BY AQ_Min {}".format(ascdesc)
+		elif filter_specs[2] == 'avg': 
+			query += " ORDER BY AQ_Avg {}".format(ascdesc)
+		else: 
+			query += " ORDER BY AQ_Max {}".format(ascdesc)
 
 	elif filter_specs[1] == 'num':
-		column = 'num_data_points'
+		query += " ORDER BY num_of_data_points {}".format(ascdesc)
 
-	#simple order by column queries
-	if column == 'flagged':
-		add_to_query = "ORDER BY flagged"
-
-	#order by count of data points
-	if column == 'num':
-		add_to_query = "ORDER BY "
-
-	#order by statistic of the data type
-	else:
-		return None
-
+	elif filter_specs[1] == 'flagged':
+		query += " ORDER BY poi.flag {}".format(ascdesc)
 
 	#retrieve data points
-	query = "SELECT poi_location_name, data_type, data_value, date_time FROM dataPoint WHERE accepted is NULL order by {} {}".format(column, ascdesc)
 	cursor.execute(query)
 	return cursor.fetchall()
 

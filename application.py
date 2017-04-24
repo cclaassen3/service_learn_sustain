@@ -160,6 +160,11 @@ def change_data_point_filter():
     db.data_point_filter = [str(x) for x in request.form['filter'].split("_")]
     return flask.redirect('/manage-data-points')
 
+@app.route('/change-poi-report-filter', methods=['POST'])
+def change_poi_report_filter():
+    db.poi_report_filter = [str(x) for x in request.form['filter'].split("_")]
+    return flask.redirect('/poi-report')
+
 @app.route('/accept-data-points', methods=['POST'])
 def accept_data_points():
     items = db.retrieveDataPoints()
