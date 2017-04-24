@@ -85,7 +85,7 @@ def poiDetails():
         data = db.retrieveDataForLocation(poiLocationName)
         return flask.render_template('poi-details.html', poilocation = poiLocationName, data_points = data, types = db.retrieveDataTypes())
     elif flask.request.method == 'POST':
-        datatype = request.form['poi_type']
+        datatype = request.form['poi_type'].replace('+',' ')
         print datatype
         rangestart = request.form['rangestart']
         print rangestart
@@ -99,7 +99,10 @@ def poiDetails():
         print data
         return flask.render_template('poi-details.html', poilocation = poiLocation, data_points = data, types = db.retrieveDataTypes())
 
-
+@app.route('/flagged')
+def flagged():
+    response = db.flagPOI(poiLocationName)
+    return flask.render_template('flagged.html')
 
 
 @app.route('/logout')

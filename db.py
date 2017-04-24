@@ -106,6 +106,12 @@ def retrieveFilteredData(poiLocation, city, state, flagged, date_time1, date_tim
 		database.commit()
 		return cursor.fetchall()
 
+def flagPOI(poiLocation):
+	query = "UPDATE POI SET flag = 1, date_flagged=sysdate WHERE location_name = %s"
+	response = cursor.execute(query, (poiLocation,))
+	database.commit()
+	return cursor.fetchall()
+
 
 def retrieveDataForLocation(poiLocation): 
 	query = "SELECT data_type, data_value, date_time FROM dataPoint WHERE poi_location_name = %s"
