@@ -12,16 +12,10 @@
             <option value={{ location[0].replace(' ', '+') }}>{{ location[0] }}</option>
           {% endfor %}
         </select>
-      <br>
-      <label>Date/Time Range </label>
+      <br><br>
+      <label>Flagged Date/Time Range </label>
         <input type="date" name="datetime1"></input><br><br>
         <input type="date" name="datetime2"></input><br><br>
-      <label>Data Type</label>
-        <select name="data_type">
-          {% for type in datatype %}
-          <option value={{ type[0].replace(' ', '+') }}>{{ type[0] }}</option>
-          {% endfor %}
-        </select>
       <label>City</label>
         <select name="city">
           {% for city in cities %}
@@ -36,11 +30,17 @@
           {% endfor %}
         </select>
       <br><br><br>
+      <input type="text" id="zip_code" name="zip_code" placeholder="Zip Code"/>
       <label> Flagged? </label>
-      <input type="radio" name="flaggedy" value="1"> Yes </input> <br>
+      <select name="flagged">
+          <option value="all">Show All</option>
+          <option value="flagged_only">Show Flagged Only</option>
+      </select>
       <br><br><br>
-      <button>Submit</button>
+      <button type="submit" formaction="search-data-point">Submit</button>
       <p id = "feedback"  style="color: red">{{error}}</p>
+      </form> 
+      <br>
       <p id= "results"> <table>
         <tr>
           <th>Location Name</th>
@@ -60,7 +60,6 @@
             <td><a href="{{url_for('poiDetails')}}"> {{data[3]}}</td>
         </tr>
         {% endfor %}
-</table> </label></p>
-    </form> 
+        </table> </label></p>
   </div>
 </div>
