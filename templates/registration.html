@@ -6,23 +6,39 @@
 
 <div class="registration-page">
   <div class="form">
+    <header style="font-size:26px; font-weight:bold;">Register</header><br><br>
     <form class="registration-form" action= "register" method="POST">
       <input type="text" name="username" id="username" placeholder="username"/>
       <input type="text" name="email" id="email" placeholder="email address"/>
       <input type="password" name="password" id="password" placeholder="password"/>
       <input type="password" name="confpassword" id="confpassword" placeholder="confirm password"/>
-      <p> User Type </p> 
+      <label> User Type </label> 
           <select name="usertype">
-          <option value="City Scientist">City Scientist</option>
+          <option value="City cScientist">City Scientist</option>
           <option value="City Official">City Official</option>
           </select>
-      <br><br>
+      <br><br><br>
+      <p> -------------------- For City Officials -------------------- </p>
       <div id = "otherparams">
-      <input id="city" type="text" placeholder="City"/>
-      <input id = "state" type="text" placeholder="State"/>
-      <input id = "title" type = "text" placeholder="Title"/>
+        <label>City</label>
+        <select name="city">
+          {% for city in cities %}
+            <option value={{ city[0].replace(' ', '+') }}>{{ city[0] }}</option>
+          {% endfor %}
+        </select>
+      <br><br>
+      <label>State</label>
+        <select name="state">
+          {% for state in states %}
+            <option value={{ state[0].replace(' ', '+') }}>{{ state[0] }}</option>
+          {% endfor %}
+        </select>
+      <br><br>
+      <input id = "title" name="title" type = "text" placeholder="Title"/>
       </div>
+      <br>
       <button id="postReg" type="submit">Register</button>
+      <p id = "feedback"  style="color: red">{{error}}</p>
       <p class="message">Already registered? <a href="{{ url_for('login')}}">Sign In</a></p>
     </form>
   </div>

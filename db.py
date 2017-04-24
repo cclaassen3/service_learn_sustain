@@ -8,6 +8,7 @@ database = None
 cursor = None
 
 data_point_filter = None
+poi_report_filter = None
 
 # ---------- database connection functions ----------
 
@@ -65,6 +66,15 @@ def register(username, email, password, usertype):
 	except:
 		return False
 
+def addCityOfficial(username, city, state, title):
+	try:
+		query = "INSERT INTO cityOfficial(username, city, state, title) VALUES(%s, %s, %s, %s)"
+		response = cursor.execute(query, (username, city, state, title))
+		database.commit()
+		return True
+	except:
+		print "Error adding city official to the DB"
+
 
 # ---------- adding new data ----------
 
@@ -90,13 +100,8 @@ def addNewDataPoint(poiLocation, date_time, dataType, value):
 		
 
 def retrieveFilteredData(poiLocation, city, state, flagged, date_time1, date_time2):
-		if flagged == "1":
-			query = "SELECT * FROM poi where location_name=%s and city=%s and state=%s and flag=%s and date_flagged>=%s and date_flagged<=%s"
-			response = cursor.execute(query, (poiLocation, city, state, flagged, date_time1, date_time2))
-		else: 
-			query = "SELECT * FROM poi where location_name=%s and city=%s and state=%s and flag=%s"
-			response = cursor.execute(query, (poiLocation, city, state, flagged))
-
+		query = "SELECT * FROM poi WHERE location_name=%s AND city =%s AND state=%s AND flag=%s AND date_flagged > %s AND date_flagged < %s"
+		response = cursor.execute(query, (poiLocation, city, state, flagged, date_time1, date_time2))
 		database.commit()
 		return cursor.fetchall()
 
@@ -113,46 +118,20 @@ def retrieveDataForPOIDetails(poiLocation, datetime1, datetime2, datapoint1, dat
 	database.commit()
 	return cursor.fetchall()
 
-		# if poiLocation != '' and city != '' and state != '' and flagged == '1' and date_time1 != '' and date_time2 != '':
-		# 	query = "SELECT * FROM poi WHERE location_name=%s AND city =%s AND state=%s AND flag=%s AND date_flagged > %s AND date_flagged < %s"
-		# 	response = cursor.execute(query, (poiLocation, city, state, flagged, date_time1, date_time2))
-		# elif poiLocation == '' and city != '' and state != '' and flagged == '1' and date_time1 != '' and date_time2 != '':
-		# 	query = "SELECT * FROM poi WHERE city =%s AND state=%s AND flag=%s AND date_flagged > %s AND date_flagged < %s"
-		# 	response = cursor.execute(query, (city, state, flagged, date_time1, date_time2))
-		# elif poiLocation == '' and city == '' and state != '' and flagged == '1' and date_time1 != '' and date_time2 != '':	
-		# 	query = "SELECT * FROM poi WHERE state=%s AND flag=%s AND date_flagged > %s AND date_flagged < %s"
-		# 	response = cursor.execute(query, (state, flagged, date_time1, date_time2))
-		# elif poiLocation == '' and city == '' and state == '' and flagged == '1' and date_time1 != '' and date_time2 != '':	
-		# 	query = "SELECT * FROM poi WHERE flag=%s AND date_flagged > %s AND date_flagged < %s"
-		# 	response = cursor.execute(query, (flagged, date_time1, date_time2))
-		# elif poiLocation == '' and city == '' and state == '' and flagged == '' and date_time1 != '' and date_time2 != '':
-		# 	query = "SELECT * FROM poi WHERE date_flagged > %s AND date_flagged < %s"
-		# 	response = cursor.execute(query, (date_time1, date_time2))
-		# elif poiLocation == '' and city != '' and state != '' and flagged == '1' and date_time1 == '' and date_time2 == '':
-		# 	query = "SELECT * FROM poi WHERE city=%s AND state=%s AND flag=%s"
-		# 	response = cursor.execute(query, (city, state, flagged))
-		# elif poiLocation == '' and city != '' and state != '' and flagged == '0' and date_time1 == '' and date_time2 == '':
-		# 	query = "SELECT * FROM poi WHERE state=%s"
-		# 	response = cursor.execute(query, (state))
-		# elif poiLocation != '' and city == '' and state == '' and flagged == '0' and date_time1 == '' and date_time2 == '':
-		# 	query = "SELECT * FROM poi WHERE location_name=%s and flag=%s"
-		# 	response = cursor.execute(query, (poiLocation))
-		# elif poiLocation != '' and city != '' and state != '' and flagged == '1' and date_time1 == '' and date_time2 == '':
-		# 	query = "SELECT * FROM poi WHERE location_name=%s and city=%s and state=%s and flag = %s"
-		# 	response = cursor.execute(query, (poiLocation, city, state, flagged))
-		# else:
-		# 	query = "SELECT * FROM poi"
-		# 	response = cursor.execute(query)
-		#response = cursor.execute(query)
-		#city, state, flagged, date_time1
+def existsUsername(username):
+	query = "SELECT username FROM user WHERE username=%s"
+	cursor.execute(query, (username,))
+	return len(cursor.fetchall()) > 0
 
-# ---------- fetch data -----------
+def existsEmail(email):
+	query = "SELECT email FROM user WHERE email=%s"
+	cursor.execute(query, (email,))
+	return len(cursor.fetchall()) > 0
 
 def retrieveDataPoints():
 	if data_point_filter: return filteredDataPoints(data_point_filter)
 	query = "SELECT poi_location_name, data_type, data_value, date_time FROM dataPoint WHERE accepted is NULL"
 	cursor.execute(query)
-	database.commit()
 	return cursor.fetchall()
 
 def filteredDataPoints(filter_specs):
@@ -170,44 +149,91 @@ def filteredDataPoints(filter_specs):
 	#retrieve data points
 	query = "SELECT poi_location_name, data_type, data_value, date_time FROM dataPoint WHERE accepted is NULL order by {} {}".format(column, ascdesc)
 	cursor.execute(query)
-	database.commit()
 	return cursor.fetchall()
 
 def retrieveCityOfficials():
 	query = "SELECT username, email, City, State, title FROM cityOfficial NATURAL JOIN user WHERE approved is NULL"
 	cursor.execute(query)
-	database.commit()
 	return cursor.fetchall()
 
 def retrievePOILocations():
-	query = "SELECT DISTINCT location_name FROM poi"
+	query = "SELECT location_name FROM poi"
 	cursor.execute(query)
-	database.commit()
 	return cursor.fetchall()
 
 def retrieveDataTypes():
 	query = "SELECT * FROM dataType"
 	cursor.execute(query)
-	database.commit()
 	return cursor.fetchall()
 
 def retrieveCities():
 	query = "SELECT DISTINCT city FROM cityState"
 	cursor.execute(query)
-	database.commit()
 	return cursor.fetchall()
 
 def retrieveStates():
 	query = "SELECT DISTINCT state FROM cityState"
 	cursor.execute(query)
-	database.commit()
 	return cursor.fetchall()
 
 def existsCityState(city, state):
 	query = "SELECT * FROM cityState WHERE city=%s AND state=%s"
 	cursor.execute(query, (city, state))
-	database.commit()
 	return len(cursor.fetchall()) > 0
+
+def retrievePOIReportRows():
+	if poi_report_filter: return filteredPOIReportRows(poi_report_filter)
+	query = "SELECT dp1.poi_location_name, poi.City, poi.State, MIN( dp2.data_value ) AS Mold_Min, AVG( dp2.data_value ) AS Mold_Avg, MAX( dp2.data_value ) AS Mold_Max, MIN( dp3.data_value ) AS AQ_Min, AVG( dp3.data_value ) AS AQ_Avg, MAX( dp3.data_value ) AS AQ_Max, SUM( dp1.poi_location_name ) AS num_of_data_points, poi.flag FROM dataPoint dp1 LEFT JOIN dataPoint dp2 ON dp1.poi_location_name = dp2.poi_location_name AND dp2.data_type =  'Mold' LEFT JOIN dataPoint dp3 ON dp1.poi_location_name = dp3.poi_location_name LEFT JOIN poi ON dp1.poi_location_name = poi.location_name AND dp3.data_type =  'Air Quality' GROUP BY poi_location_name"
+	cursor.execute(query)
+	return cursor.fetchall()
+
+def filteredPOIReportRows(poi_report_filter):
+
+	add_to_query = None
+
+	#set ascending / descending
+	ascdesc = 'asc'
+	if filter_specs[0] == 'desc': ascdesc = 'desc'
+
+	#set column to filter by
+	column = 'flagged'
+	column_value = None
+	stat_func = None
+	if filter_specs[1] == 'mold':
+		column = 'data_type'
+		column_value = 'Mold'
+		if filter_specs[2] == 'min': stat_func = 'min'
+		elif filter_specs[2] == 'avg': stat_func = 'avg'
+		else: stat_func = 'max'
+
+	elif filter_specs[1] == 'AQ': 
+		column = 'data_type'
+		column = 'Air Quality'
+		if filter_specs[2] == 'min': stat_func = 'min'
+		elif filter_specs[2] == 'avg': stat_func = 'avg'
+		else: stat_func = 'max'
+
+	elif filter_specs[1] == 'num':
+		column = 'num_data_points'
+
+	#simple order by column queries
+	if column == 'flagged':
+		add_to_query = "ORDER BY flagged"
+
+	#order by count of data points
+	if column == 'num':
+		add_to_query = "ORDER BY "
+
+	#order by statistic of the data type
+	else:
+		return None
+
+
+	#retrieve data points
+	query = "SELECT poi_location_name, data_type, data_value, date_time FROM dataPoint WHERE accepted is NULL order by {} {}".format(column, ascdesc)
+	cursor.execute(query)
+	return cursor.fetchall()
+
 
 
 # ---------- modify data ----------
@@ -243,6 +269,7 @@ def rejectCityOfficial(username):
 		database.commit()
 	except:
 		print "error rejecting city official: {}".format(username)
+
 
 
 
