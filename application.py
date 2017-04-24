@@ -12,6 +12,7 @@ import db
 app = flask.Flask(__name__)
 permissions_enabled = False
 user = None
+poiLocation = None
 
 class User:
     def __init__(self, username, user_type):
@@ -76,6 +77,31 @@ def registration():
         if not accepted: return flask.render_template('registration.html', cities=db.retrieveCities(), states=db.retrieveStates(), error="Registration Failure")
         return flask.redirect('login')
 
+@app.route('/poi-details', methods=["POST", "GET"])
+def poiDetails(): 
+    global poiLocation
+    if request.method == "GET":
+        poiLocationName = str(poiLocation)
+        data = db.retrieveDataForLocation(poiLocationName)
+        return flask.render_template('poi-details.html', poilocation = poiLocationName, data_points = data, types = db.retrieveDataTypes())
+    elif flask.request.method == 'POST':
+        datatype = request.form['poi_type']
+        print datatype
+        rangestart = request.form['rangestart']
+        print rangestart
+        rangeend = request.form['rangeend']
+        print rangeend
+        date1 = request.form['datetime1']
+        print date1
+        date2 = request.form['datetime2']
+        print date2
+        data = db.retrieveDataForPOIDetails(poiLocation, date1, date2, rangestart, rangeend, datatype)
+        print data
+        return flask.render_template('poi-details.html', poilocation = poiLocation, data_points = data, types = db.retrieveDataTypes())
+
+
+
+
 @app.route('/logout')
 def logout():
     return flask.redirect('/login')
@@ -97,11 +123,14 @@ def admin():
 
 @app.route('/search-data-point', methods=['GET', 'POST'])
 def search_POI():
+    global poiLocation
     if permissions_enabled and not user: return flask.redirect('login')
     if flask.request.method == 'GET':
         return flask.render_template('search-data-point.html', locations=db.retrievePOILocations(), datatype = db.retrieveDataTypes(), cities = db.retrieveCities(), states = db.retrieveStates(), data_points="")
     elif flask.request.method == 'POST':
         location = request.form['poi_location'].replace('+', ' ')
+        poiLocation = location
+        print poiLocation
         city = request.form['city'].replace('+', ' ')
         state = request.form['state'].replace('+', ' ')
         if request.form['flaggedy'] == "1":
