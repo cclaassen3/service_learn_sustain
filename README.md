@@ -3,6 +3,7 @@
 to run the app:
 
 ** run with Python 2.7 **
+
 ** need to be connected to the Georgia Tech VPN to access the DB **
 
 (i) recommended to use virtualenv to ensure no paths / other vars affected by flask app configuration
