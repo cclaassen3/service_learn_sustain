@@ -96,12 +96,13 @@ def poiDetails():
         print date2
         data = db.retrieveDataForPOIDetails(poiLocation, date1, date2, rangestart, rangeend, datatype)
         print data
-        return flask.render_template('poi-details.html', poilocation = poiLocation, data_points = data, types = db.retrieveDataTypes())
+        return flask.render_template('poi-details.html', poilocation = poiLocationName, data_points = data, types = db.retrieveDataTypes())
 
 
 @app.route('/flagged')
 def flagged():
-    response = db.flagPOI(poiLocationName)
+    global poiLocation
+    response = db.flagPOI(poiLocation)
     return flask.render_template('flagged.html')
 
 @app.route('/logout')

@@ -1,5 +1,6 @@
 import db_config
 import MySQLdb
+import datetime
 
 # ---------- variable setup ----------
 
@@ -101,8 +102,8 @@ def addCityOfficial(username, city, state, title):
 		print "Error adding city official to the DB"
 
 def flagPOI(poiLocation):
-	query = "UPDATE POI SET flag = 1, date_flagged=sysdate WHERE location_name = %s"
-	response = cursor.execute(query, (poiLocation,))
+	query = "UPDATE poi SET flag = 1, date_flagged=%s WHERE location_name = %s"
+	response = cursor.execute(query, (datetime.date.today(), poiLocation,))
 	database.commit()
 	return cursor.fetchall()
 
@@ -142,7 +143,8 @@ def retrieveDataForLocation(poiLocation):
 
 def retrieveDataForPOIDetails(poiLocation, datetime1, datetime2, datapoint1, datapoint2, datatype): 
 	query = "SELECT data_type, data_value, date_time FROM dataPoint WHERE poi_location_name = %s AND date_time >= %s AND date_time <= %s AND data_value >= %s AND data_value <= %s AND data_type = %s"
-	cursor.execute(query, (poiLocation, datetime1, datetime2, datapoint1, datapoint2, datatype))
+	cursor.execute(query, (poiLocation, datetime1, datetime2, datapoint1, datapoint2, datatype)
+		)
 	database.commit()
 	return cursor.fetchall()
 
