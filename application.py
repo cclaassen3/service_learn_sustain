@@ -137,13 +137,15 @@ def search_data_points():
             flagged = True
 
         dictionary = {}
-        if location: dictionary['location_name'] = location
-        if city: dictionary['City'] = city
-        if state: dictionary['State'] = state
-        if zipcode: dictionary['zip_code'] = zipcode
-        if date1: dictionary['min_date'] = date1
-        if date2: dictionary['max_date'] = date2
-        if flagged: dictionary['flagged'] = flagged
+        if location: dictionary['location_name'] = str(location)
+        if city: dictionary['City'] = str(city)
+        if state: dictionary['State'] = str(state)
+        if zipcode: dictionary['zip_code'] = str(zipcode)
+        if date1: dictionary['min_date'] = str(date1)
+        if date2: dictionary['max_date'] = str(date2)
+        if flagged: dictionary['flagged'] = int(flagged)
+
+        print dictionary
 
         data_points = db.retrieveFilteredDataPoints(dictionary)
 

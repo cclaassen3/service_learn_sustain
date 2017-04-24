@@ -106,14 +106,19 @@ def addCityOfficial(username, city, state, title):
 def retrieveFilteredDataPoints(dictionary):
 		#query = "SELECT * FROM poi WHERE location_name=%s AND city =%s AND state=%s AND flag=%s AND date_flagged > %s AND date_flagged < %s"
 		query = "SELECT * FROM poi"
-		# if dictionary:
-		# 	query += " WHERE "
-		# 	if "location_name" in dictionary.keys():
-		# 		query += "location_name={}".format(dictionary["location_name"])
-		# 	if "City" in dictionary.keys():
-		# 		query += "City={}".format(dictionary["City"])
-		# 	if "State" in dictionary.keys():
-		# 		query += "State={}".format(dictionary["State"])
+		if dictionary:
+			whereList = []
+			if "location_name" in dictionary.keys():
+				whereList.append("location_name='{}'".format(dictionary["location_name"]))
+			if "City" in dictionary.keys():
+				whereList.append("City='{}'".format(dictionary["City"]))
+			if "State" in dictionary.keys():
+				whereList.append("State='{}'".format(dictionary["State"]))
+			if "zip_code" in dictionary.keys():
+				whereList.append("zip_code='{}'".format(dictionary["zip_code"]))
+			whereString = " AND ".join(whereList)
+			query += " WHERE " + whereString
+			print query
 
 		cursor.execute(query)
 		database.commit()
