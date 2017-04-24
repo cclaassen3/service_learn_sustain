@@ -104,7 +104,7 @@ def logout():
 
 @app.route('/cityScientist')
 def cityScientist():
-    if permissions_enabled and not user and not : return flask.redirect('login')
+    if permissions_enabled and not user: return flask.redirect('login')
     return flask.render_template('cityscientist.html')
 
 @app.route('/cityOfficial')
