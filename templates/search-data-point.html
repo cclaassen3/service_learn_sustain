@@ -16,12 +16,6 @@
       <label>Date/Time Range </label>
         <input type="date" name="datetime1"></input><br><br>
         <input type="date" name="datetime2"></input><br><br>
-      <label>Data Type</label>
-        <select name="data_type">
-          {% for type in datatype %}
-          <option value={{ type[0].replace(' ', '+') }}>{{ type[0] }}</option>
-          {% endfor %}
-        </select>
       <label>City</label>
         <select name="city">
           {% for city in cities %}
