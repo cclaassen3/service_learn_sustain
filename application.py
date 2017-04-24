@@ -118,7 +118,7 @@ def admin():
     return flask.render_template('admin.html')
 
 @app.route('/search-data-point', methods=['GET', 'POST'])
-def search_data_points():
+def search_POI():
 
     if permissions_enabled and not user: return flask.redirect('login')
 
