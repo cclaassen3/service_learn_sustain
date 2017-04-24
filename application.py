@@ -46,15 +46,35 @@ def login():
 @app.route('/register', methods=["POST", "GET"])
 def registration():
     if request.method == "GET":
-        return flask.render_template('registration.html')
+        return flask.render_template('registration.html', cities=db.retrieveCities(), states=db.retrieveStates())
+
     if request.method == "POST":
         insertedUser = request.form['username']
         insertedPass = request.form['password']
+        confirmedPass = request.form['confpassword']
         insertedEmail = request.form['email']
         insertedType = request.form['usertype']
+        if not insertedUser or not insertedPass or not insertedEmail or not insertedType: return flask.render_template('registration.html', cities=db.retrieveCities(), states=db.retrieveStates(), error="Please Complete All Fields")
+        if insertedPass != confirmedPass: return flask.render_template('registration.html', error="Passwords Do Not Match")
+
+        #ensure username and email not already taken
+        if db.existsUsername(insertedUser): return flask.render_template('registration.html', cities=db.retrieveCities(), states=db.retrieveStates(), error="Username Already Exists")
+        elif db.existsEmail(insertedEmail): return flask.render_template('registration.html', cities=db.retrieveCities(), states=db.retrieveStates(), error="Email Already Exists")
+
+        #parse city official info
+        city = request.form['city'].replace('+', ' ')
+        state = request.form['state'].replace('+', ' ')
+        title = request.form['title']
+        if insertedType == 'City Official':
+            if not city or not state or not title: return flask.render_template('registration.html', cities=db.retrieveCities(), states=db.retrieveStates(), error="Please fill out all City Official Fields")
+            if not db.existsCityState(city, state): return flask.render_template('registration.html', cities=db.retrieveCities(), states=db.retrieveStates(), error="Invalid City State Combination")
+
+
+        #add to DB
         accepted = db.register(insertedUser, insertedEmail, insertedPass, insertedType)
-        if not accepted: return flask.render_template('registration.html', error="Registration Failure")
-        return flask.render_template('login.html')
+        if accepted and insertedType == 'City Official': db.addCityOfficial(insertedUser, city, state, title)
+        if not accepted: return flask.render_template('registration.html', cities=db.retrieveCities(), states=db.retrieveStates(), error="Registration Failure")
+        return flask.redirect('login')
 
 @app.route('/logout')
 def logout():
