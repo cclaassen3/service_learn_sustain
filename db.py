@@ -118,8 +118,10 @@ def retrieveFilteredDataPoints(dictionary):
 				whereList.append("zip_code='{}'".format(dictionary["zip_code"]))
 			if "flagged" in dictionary.keys():
 				whereList.append("flag={}".format(dictionary["flagged"]))
-				# if "min_date" in dictionary.keys():
-				# 	whereList.append("date_flagged > '{}'".format(dictionary["min_date"]))
+			if "min_date" in dictionary.keys():
+				whereList.append("date_flagged > '{}'".format(dictionary["min_date"]))
+			if "max_date" in dictionary.keys():
+				whereList.append("date_flagged < '{}'".format(dictionary['max_date']))
 			whereString = " AND ".join(whereList)
 			query += " WHERE " + whereString
 			print query

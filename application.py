@@ -144,9 +144,7 @@ def search_data_points():
         if date1: dictionary['min_date'] = str(date1)
         if date2: dictionary['max_date'] = str(date2)
         if flagged: dictionary['flagged'] = int(flagged)
-
-        print dictionary
-
+        
         data_points = db.retrieveFilteredDataPoints(dictionary)
 
         global poiLocation
