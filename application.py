@@ -76,26 +76,6 @@ def registration():
         if not accepted: return flask.render_template('registration.html', cities=db.retrieveCities(), states=db.retrieveStates(), error="Registration Failure")
         return flask.redirect('login')
 
-@app.route('/poi-details', methods=["POST", "GET"])
-def poiDetails(): 
-    global poiLocation
-    if request.method == "GET":
-        poiLocationName = str(poiLocation)
-        data = db.retrieveDataForLocation(poiLocationName)
-        return flask.render_template('poi-details.html', poilocation = poiLocationName, data_points = data, types = db.retrieveDataTypes(), error = "")
-    elif flask.request.method == 'POST':
-        data = db.retrieveDataForLocation(poiLocation)
-        datatype = request.form['poi_type'].replace('+',' ')
-        rangestart = request.form['rangestart']
-        rangeend = request.form['rangeend']
-        date1 = request.form['datetime1']
-        date2 = request.form['datetime2']
-        if not datatype or not rangestart or not rangeend or not date1 or not date2: 
-            return flask.render_template('poi-details.html', poilocation = poiLocation, data_points = data, types = db.retrieveDataTypes(), error = "Please complete all fields")
-        else: 
-            data = db.retrieveDataForPOIDetails(poiLocation, date1, date2, rangestart, rangeend, datatype)
-            return flask.render_template('poi-details.html', poilocation = poiLocation, data_points = data, types = db.retrieveDataTypes(), error="")
-
 @app.route('/flagged')
 def flagged():
     global poiLocation
@@ -149,13 +129,42 @@ def search_POI():
         if date1: dictionary['min_date'] = str(date1)
         if date2: dictionary['max_date'] = str(date2)
         if flagged: dictionary['flagged'] = int(flagged)
-        
+
+        if city != "None" and state != "None" and not db.existsCityState(city, state): return render_template('search-data-point.html', locations=db.retrievePOILocations(), datatype = db.retrieveDataTypes(), cities = db.retrieveCities(), states=db.retrieveStates(), data_points=db.retrievePOIData(dictionary), error="Invalid City State Combination")
         data_points = db.retrievePOIData(dictionary)
 
         global poiLocation
         poiLocation = location
-        return render_template('search-data-point.html', locations=db.retrievePOILocations(), datatype = db.retrieveDataTypes(), cities = db.retrieveCities(), states = db.retrieveStates(), data_points= data_points)
-        #if not db.existsCityState(city, state): return flask.render_template('add_new_poi_location.html', cities=db.retrieveCities(), states=db.retrieveStates(), error="Invalid City State Combination")
+        return render_template('search-data-point.html', locations=db.retrievePOILocations(), datatype = db.retrieveDataTypes(), cities = db.retrieveCities(), states = db.retrieveStates(), data_points=db.retrievePOIData(dictionary))
+
+@app.route('/poi-details', methods=["POST", "GET"])
+def poiDetails(): 
+
+    global poiLocation
+    if request.method == "GET":
+        poiLocationName = str(poiLocation)
+        return flask.render_template('poi-details.html', poilocation=poiLocationName, data_points=db.retrieveDataForLocation(poiLocationName), types=db.retrieveDataTypes())
+
+    elif flask.request.method == 'POST':
+        datatype = request.form['poi_type'].replace('+',' ')
+        rangestart = request.form['rangestart']
+        rangeend = request.form['rangeend']
+        date1 = request.form['datetime1']
+        date2 = request.form['datetime2']
+
+        dictionary = {}
+        if datatype: dictionary['dataType'] = str(datatype)
+        if rangestart: dictionary['min_val'] = int(rangestart)
+        if rangeend: dictionary['max_val'] = int(rangeend)
+        if date1: dictionary['min_date'] = str(date1)
+        if date2: dictionary['max_date'] = str(date2)
+
+        data = db.retrieveDataForPOIDetails(str(poiLocation), dictionary)
+
+        # if not datatype or not rangestart or not rangeend or not date1 or not date2: 
+        #     return flask.render_template('poi-details.html', poilocation = poiLocation, data_points=db.retrieveDataForLocation(poiLocation), types = db.retrieveDataTypes(), error = "Please complete all fields")
+        
+        return flask.render_template('poi-details.html', poilocation=poiLocation, data_points=data, types = db.retrieveDataTypes())
 
 @app.route('/add-new-poi-location', methods=['GET', 'POST'])
 def add_new_poi_location():

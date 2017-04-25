@@ -128,7 +128,7 @@ def retrievePOIData(dictionary):
 			if "min_date" in dictionary.keys():
 				whereList.append("date_flagged > '{}'".format(dictionary["min_date"]))
 			if "max_date" in dictionary.keys():
-				whereList.append("date_flagged < '{}'".format(dictionary['max_date']))
+				whereList.append("date_flagged < '{}'".format(dictionary["max_date"]))
 			whereString = " AND ".join(whereList)
 			query += " WHERE " + whereString
 			print query
@@ -143,12 +143,29 @@ def retrieveDataForLocation(poiLocation):
 	database.commit()
 	return cursor.fetchall()
 
-def retrieveDataForPOIDetails(poiLocation, datetime1, datetime2, datapoint1, datapoint2, datatype): 
-	query = "SELECT data_type, data_value, date_time FROM dataPoint WHERE poi_location_name = %s AND date_time >= %s AND date_time <= %s AND data_value >= %s AND data_value <= %s AND data_type = %s"
-	cursor.execute(query, (poiLocation, datetime1, datetime2, datapoint1, datapoint2, datatype)
-		)
+def retrieveDataForPOIDetails(poiLocation, dictionary=None): 
+	#query = "SELECT data_type, data_value, date_time FROM dataPoint WHERE poi_location_name = %s AND date_time >= %s AND date_time <= %s AND data_value >= %s AND data_value <= %s AND data_type = %s"
+	query = "SELECT data_type, data_value, date_time FROM dataPoint WHERE poi_location_name='{}'".format(poiLocation)
+	if dictionary:
+		whereList = []
+		if "dataType" in dictionary.keys():
+			whereList.append("data_type='{}'".format(dictionary["dataType"]))
+		if "min_val" in dictionary.keys():
+			whereList.append("data_value > '{}'".format(dictionary["min_val"]))
+		if "max_val" in dictionary.keys():
+			whereList.append("data_value < {}".format(dictionary["max_val"]))
+		if "min_date" in dictionary.keys():
+			whereList.append("date_time > '{}'".format(dictionary["min_date"]))
+		if "max_date" in dictionary.keys():
+			whereList.append("date_time < '{}'".format(dictionary["max_date"]))
+		whereString = " AND " + " AND ".join(whereList)
+		query += whereString
+		print query
+
+	cursor.execute(query)
 	database.commit()
 	return cursor.fetchall()
+
 
 def existsUsername(username):
 	query = "SELECT username FROM user WHERE username=%s"

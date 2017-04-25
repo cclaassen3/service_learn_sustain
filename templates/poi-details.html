@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}" media="screen" />
 <div class="form" style="margin-top:100px">
-<header style="font-size:26px; font-weight:bold;">POI Details</header>
+<header style="font-size:26px; font-weight:bold;">POI Details: {{ poiLocation }}</header>
     <br><br>
     <form class="new-search-form" action="poi-details" method="POST">
       <label>Data Type</label>
