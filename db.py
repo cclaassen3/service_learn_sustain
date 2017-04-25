@@ -110,7 +110,7 @@ def flagPOI(poiLocation):
 
 # ---------- data retrieval ----------
 	
-def retrieveFilteredDataPoints(dictionary):
+def retrievePOIData(dictionary):
 		#query = "SELECT * FROM poi WHERE location_name=%s AND city =%s AND state=%s AND flag=%s AND date_flagged > %s AND date_flagged < %s"
 		query = "SELECT * FROM poi"
 		if dictionary:

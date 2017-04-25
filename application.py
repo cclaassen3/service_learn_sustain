@@ -127,7 +127,8 @@ def search_POI():
     if permissions_enabled and not user: return flask.redirect('login')
 
     if flask.request.method == 'GET':
-        return flask.render_template('search-data-point.html', locations=db.retrievePOILocations(), datatype = db.retrieveDataTypes(), cities = db.retrieveCities(), states = db.retrieveStates(), data_points="")
+        db.data_point_filter = None
+        return flask.render_template('search-data-point.html', locations=db.retrievePOILocations(), datatype = db.retrieveDataTypes(), cities = db.retrieveCities(), states = db.retrieveStates(), data_points=db.retrievePOIData(None))
 
     elif flask.request.method == 'POST':
         location = request.form['poi_location'].replace('+', ' ')
@@ -141,15 +142,15 @@ def search_POI():
             flagged = True
 
         dictionary = {}
-        if location: dictionary['location_name'] = str(location)
-        if city: dictionary['City'] = str(city)
-        if state: dictionary['State'] = str(state)
+        if location and location != "None": dictionary['location_name'] = str(location)
+        if city and city != "None": dictionary['City'] = str(city)
+        if state and state != "None": dictionary['State'] = str(state)
         if zipcode: dictionary['zip_code'] = str(zipcode)
         if date1: dictionary['min_date'] = str(date1)
         if date2: dictionary['max_date'] = str(date2)
         if flagged: dictionary['flagged'] = int(flagged)
         
-        data_points = db.retrieveFilteredDataPoints(dictionary)
+        data_points = db.retrievePOIData(dictionary)
 
         global poiLocation
         poiLocation = location
