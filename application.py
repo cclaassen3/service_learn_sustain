@@ -143,7 +143,7 @@ def poiDetails():
     global poiLocation
     if request.method == "GET":
         poiLocationName = str(poiLocation)
-        return flask.render_template('poi-details.html', poilocation=poiLocationName, data_points=db.retrieveDataForLocation(poiLocationName), types=db.retrieveDataTypes())
+        return flask.render_template('poi-details.html', poilocation=poiLocationName, data_points=[], types=db.retrieveDataTypes())
 
     elif flask.request.method == 'POST':
         datatype = request.form['poi_type'].replace('+',' ')
@@ -160,10 +160,7 @@ def poiDetails():
         if date2: dictionary['max_date'] = str(date2)
 
         data = db.retrieveDataForPOIDetails(str(poiLocation), dictionary)
-
-        # if not datatype or not rangestart or not rangeend or not date1 or not date2: 
-        #     return flask.render_template('poi-details.html', poilocation = poiLocation, data_points=db.retrieveDataForLocation(poiLocation), types = db.retrieveDataTypes(), error = "Please complete all fields")
-        
+                
         return flask.render_template('poi-details.html', poilocation=poiLocation, data_points=data, types = db.retrieveDataTypes())
 
 @app.route('/add-new-poi-location', methods=['GET', 'POST'])
