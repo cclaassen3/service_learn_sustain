@@ -82,22 +82,19 @@ def poiDetails():
     if request.method == "GET":
         poiLocationName = str(poiLocation)
         data = db.retrieveDataForLocation(poiLocationName)
-        return flask.render_template('poi-details.html', poilocation = poiLocationName, data_points = data, types = db.retrieveDataTypes())
+        return flask.render_template('poi-details.html', poilocation = poiLocationName, data_points = data, types = db.retrieveDataTypes(), error = "")
     elif flask.request.method == 'POST':
+        data = db.retrieveDataForLocation(poiLocation)
         datatype = request.form['poi_type'].replace('+',' ')
-        print datatype
         rangestart = request.form['rangestart']
-        print rangestart
         rangeend = request.form['rangeend']
-        print rangeend
         date1 = request.form['datetime1']
-        print date1
         date2 = request.form['datetime2']
-        print date2
-        data = db.retrieveDataForPOIDetails(poiLocation, date1, date2, rangestart, rangeend, datatype)
-        print data
-        return flask.render_template('poi-details.html', poilocation = poiLocationName, data_points = data, types = db.retrieveDataTypes())
-
+        if not datatype or not rangestart or not rangeend or not date1 or not date2: 
+            return flask.render_template('poi-details.html', poilocation = poiLocation, data_points = data, types = db.retrieveDataTypes(), error = "Please complete all fields")
+        else: 
+            data = db.retrieveDataForPOIDetails(poiLocation, date1, date2, rangestart, rangeend, datatype)
+            return flask.render_template('poi-details.html', poilocation = poiLocation, data_points = data, types = db.retrieveDataTypes(), error="")
 
 @app.route('/flagged')
 def flagged():
@@ -125,7 +122,7 @@ def admin():
     return flask.render_template('admin.html')
 
 @app.route('/search-data-point', methods=['GET', 'POST'])
-def search_data_points():
+def search_POI():
 
     if permissions_enabled and not user: return flask.redirect('login')
 
